@@ -1,40 +1,10 @@
-require 'net/http'
-require 'uri'
-require 'rubygems'
-require 'json'
+#
+# Script to start WRUF.
+#
+# Author: Filip van Laenen <f.a.vanlaenen@ieee.org>
+#
 
-FlickRestServicesUri = 'http://api.flickr.com/services/rest/'
-SearchMethod = 'flickr.photos.search'
-ApiKey = '22d606ee88b821d73258bd42859af76a'
-
-def search_new_pic(tags)
-	
-	uri = URI.parse(FlickRestServicesUri)
-
-	http = Net::HTTP.new(uri.host, uri.port)
-	request = Net::HTTP::Get.new(uri.path)
-	request.set_form_data({'method' => SearchMethod,
-		                   'api_key' => ApiKey,
-		                   'extras' => 'o_dims,original_format',
-		                   'format' => 'json',
-		                   'media' => 'photos',
-		                   'safe_search' => '1',
-		                   'sort' => 'interestingness-desc',
-		                   'tags' => tags.join(','),
-		                   'tag_mode' => 'any'})
-
-	request = Net::HTTP::Get.new( uri.path+ '?' + request.body )
-
-	response = http.request(request)
-
-	case response
-	when Net::HTTPSuccess, Net::HTTPRedirection
-		puts response.body
-		puts JSON.parse(response.body)
-	else
-		puts "Error"
-	end		
-end
+require 'flickr_searcher'
 
 def download_pic(pic_info)
 	# Loading an original picture http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{o-secret}_o.(jpg|gif|png)
@@ -55,8 +25,5 @@ end
 def log_pic(pic_info)
 end
 
-pic_info = search_new_pic(['green', 'blue'])
-pic_filename = download_pic(pic_info)
-decorate_pic(pic_filename, pic_info)
-set_pic_as_background(pic_filename)
-log_pic(pic_info)
+searcher = FlickrSearcher.new(['green', 'blue'])
+photo_info = searcher.find_next_photo_info
