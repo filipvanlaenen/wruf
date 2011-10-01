@@ -39,6 +39,7 @@ class FlickrSearcher
 
 		case response
 		when Net::HTTPSuccess, Net::HTTPRedirection
+		puts response.body
 			return REXML::Document.new(response.body)
 		else
 			raise "An error occured while trying to search Flickr"

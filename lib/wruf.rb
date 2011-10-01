@@ -23,7 +23,7 @@ end
 def log_pic(pic_info)
 end
 
-searcher = FlickrSearcher.new(['green', 'blue'])
+searcher = FlickrSearcher.new(['green', 'blue', 'fractal', 'astronomy'])
 photo_info = searcher.find_next_photo_info
 photo_url = searcher.get_photo_url(photo_info)
 searcher.download_photo(photo_url, LocalPhotoFileName)
