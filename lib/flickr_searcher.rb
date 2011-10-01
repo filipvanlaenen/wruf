@@ -53,5 +53,30 @@ class FlickrSearcher
 		info_set = get_infoset(@tags)
 		return get_photo_info(info_set)
 	end
+	
+	def get_photo_url(photo_info)
+		id = photo_info.attributes['id']
+		farm_id = photo_info.attributes['farm']
+		server_id = photo_info.attributes['server']
+		secret = photo_info.attributes['originalsecret']
+		if (secret == nil)
+			secret = photo_info.attributes['secret']
+		end
+		format = photo_info.attributes['originalformat']
+		if (format == nil)
+			format = 'jpg'
+		end
+		return "http://farm#{farm_id}.static.flickr.com/#{server_id}/#{id}_#{secret}_o.#{format}"
+	end
+	
+	def download_photo(photo_url, target)
+		uri = URI.parse(photo_url)
+		Net::HTTP.start(uri.host) { |http|
+			resp = http.get(uri.path) 
+			open(target, "wb") { |file|
+				file.write(resp.body)
+		   	}
+		}	
+	end
 
 end
