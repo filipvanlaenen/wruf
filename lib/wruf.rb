@@ -6,7 +6,7 @@
 
 require 'flickr_searcher'
 
-LocalPhotoFileName = 'local_copy.jpg'
+LocalPhotoFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'local_copy.jpg') 
 
 def decorate_pic(pic_filename, pic_info)
 	# Add the title of the pic
@@ -16,8 +16,8 @@ def decorate_pic(pic_filename, pic_info)
 end
 
 def set_pic_as_background(pic_filename)
-	system "gconftool-2 -t str --set /desktop/gnome/background/picture_filename #{pic_filename}"
-	system 'gconftool-2 -t str --set /desktop/gnome/background/picture_options "centered"'
+	system "gconftool-2 -t string --set /desktop/gnome/background/picture_filename #{pic_filename}"
+	system 'gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"'
 end
 
 def log_pic(pic_info)
