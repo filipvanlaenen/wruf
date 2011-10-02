@@ -14,7 +14,10 @@ class FlickrSearcher
 	SearchMethod = 'flickr.photos.search'
 	ApiKey = '22d606ee88b821d73258bd42859af76a'
 
-	def initialize(tags)
+	def initialize(dims, tolerance, tags)
+		@width = dims[0]
+		@height = dims[1]
+		@tolerance = tolerance
 		@tags = tags
 	end
 
@@ -33,13 +36,12 @@ class FlickrSearcher
 				               'tags' => tags.join(','),
 				               'tag_mode' => 'any'})
 
-		request = Net::HTTP::Get.new( uri.path+ '?' + request.body )
+		request = Net::HTTP::Get.new(uri.path + '?' + request.body)
 
 		response = http.request(request)
 
 		case response
 		when Net::HTTPSuccess, Net::HTTPRedirection
-		puts response.body
 			return REXML::Document.new(response.body)
 		else
 			raise "An error occured while trying to search Flickr"
@@ -47,7 +49,12 @@ class FlickrSearcher
 	end
 	
 	def get_photo_info(info_set)
-		return info_set.elements["rsp/photos/photo"]
+		return info_set.get_elements("rsp/photos/photo") \
+					   .select{|e| e.attributes["o_width"].to_i >= @width} \
+					   .select{|e| e.attributes["o_height"].to_i >= @height} \
+					   .select{|e| (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) / (@height.to_f / @width.to_f) < 1.to_f + @tolerance} \
+					   .select{|e| (@height.to_f / @width.to_f) / (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) < 1.to_f + @tolerance} \
+					   .first
 	end
 	
 	def find_next_photo_info
