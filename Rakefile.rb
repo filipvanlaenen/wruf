@@ -72,7 +72,10 @@ end
 
 desc "Mutation testing with Heckle"
 task :heckle => "heckle:clean" do
-	Heckle.new('FlickrSearcher').defined_in('flickr_searcher.rb').tested_by('flickr_searcher_unit_test.rb').heckle
+	Heckle.new('FlickrSearcher').defined_in('flickr_searcher.rb') \
+								.tested_by('flickr_searcher_unit_test.rb') \
+								.skip('download_photo', 'find_next_photo_info', 'get_infoset') \
+								.heckle
 end
 
 # Method to read the contents of a file
@@ -96,6 +99,7 @@ class Heckle
 
 	def initialize(classname)
 		@classname = classname
+		@exclude_methods = nil
 	end
 	
 	def defined_in(codefile)
@@ -104,11 +108,19 @@ class Heckle
 	end
 	
 	def tested_by(testfile)
-		@testfile = testfile
+		@testfile = "test/#{testfile}"
+		return self
+	end
+	
+	def skip(*method_names)
+		if (@exclude_methods == nil)
+			@exclude_methods = []
+		end
+		@exclude_methods = @exclude_methods + method_names
 		return self
 	end
 
-	def heckle(include_methods = nil, exclude_methods = nil)
+	def heckle(include_methods = nil)
 		require @codefile
 		klass = Object.const_get("#{@classname}")
 		if (include_methods == nil)
@@ -116,8 +128,8 @@ class Heckle
 		else
 			methods = include_methods
 		end
-		if (exclude_methods != nil)
-			methods = methods.reject { | method | exclude_methods.include?(method.to_s) }
+		if (@exclude_methods != nil)
+			methods = methods.reject { | method | @exclude_methods.include?(method.to_s) }
 		end
 		puts "Doing mutation testing on #{methods.length} method(s) of #{@classname} against #{@testfile}:"
 		number_of_mutations = 0
@@ -132,15 +144,15 @@ class Heckle
 			while (result.include?("Mutation caused a syntax error:")) do
 				system(cmd)
 				result = read_file(heckle_log)
-				puts "   -> Mutation caused a syntax error -- re-running this task"
+				puts "   -> Mutation caused a syntax error -- re-running this task."
 			end
 			if (!result.include?("All heckling was thwarted! YAY!!!"))
-				raise "#{result}\nRe-run this specific test case using #{cmd}"
+				raise "#{result}\nRe-run this specific test case using '#{cmd}'."
 			elsif (result =~ /loaded with (\d+) possible mutations/)
 				number_of_mutations += $1.to_i
 			end
 		end
-		puts "Checked #{number_of_mutations} mutations, and no issues were found in #{classname}."
+		puts "Checked #{number_of_mutations} mutations, and no issues were found in #{@classname}."
 	end
 
 end

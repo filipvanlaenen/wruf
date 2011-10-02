@@ -35,8 +35,12 @@ EOF
 	SampleFlickrPhoto1Id = '41942696'
 	SampleFlickrPhoto1Info = '<photo id="41942696" owner="23548413@N00" secret="ac7de727a7" server="28" farm="1" title="Holding on" ispublic="1" isfriend="0" isfamily="0" o_width="1023" o_height="628" originalsecret="ac7de727a7" originalformat="jpg" />'
 	SampleFlickrPhoto2Info = '<photo id="91957795" owner="86685058@N00" secret="5a27611762" server="42" farm="1" title="Lady Lula\'s Bright Eyed Stare" ispublic="1" isfriend="0" isfamily="0" />'
+	SampleFlickrPhotoWithDifferentFormatInfo = '<photo id="41942696" owner="23548413@N00" secret="ac7de727a7" server="28" farm="1" title="Holding on" ispublic="1" isfriend="0" isfamily="0" o_width="1023" o_height="628" originalsecret="ac7de727a7" originalformat="png" />'
+	SampleFlickrPhotoWithDifferentOriginalSecretInfo = '<photo id="41942696" owner="23548413@N00" secret="ac7de727a7" server="28" farm="1" title="Holding on" ispublic="1" isfriend="0" isfamily="0" o_width="1023" o_height="628" originalsecret="5a27611762" originalformat="jpg" />'
 	SampleFlickrPhoto1Url = 'http://farm1.static.flickr.com/28/41942696_ac7de727a7_o.jpg'
 	SampleFlickrPhoto2Url = 'http://farm1.static.flickr.com/42/91957795_5a27611762_o.jpg'
+	SampleFlickrPhotoWithDifferentFormatUrl = 'http://farm1.static.flickr.com/28/41942696_ac7de727a7_o.png'
+	SampleFlickrPhotoWithDifferentOriginalSecretUrl = 'http://farm1.static.flickr.com/28/41942696_5a27611762_o.jpg'
 
 	def setup
 		@searcher = FlickrSearcher.new(['foo', 'bar'])
@@ -55,5 +59,15 @@ EOF
 	def test_compose_url_from_photo_info_lacking_original_info
 		photo_info = REXML::Document.new(SampleFlickrPhoto2Info).elements["photo"]
 		assert_equal SampleFlickrPhoto2Url, @searcher.get_photo_url(photo_info)
+	end
+	
+	def test_compose_url_from_photo_info_with_different_format
+		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentFormatInfo).elements["photo"]
+		assert_equal SampleFlickrPhotoWithDifferentFormatUrl, @searcher.get_photo_url(photo_info)
+	end
+	
+	def test_compose_url_from_photo_info_with_different_original_secret
+		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentOriginalSecretInfo).elements["photo"]
+		assert_equal SampleFlickrPhotoWithDifferentOriginalSecretUrl, @searcher.get_photo_url(photo_info)
 	end
 end
