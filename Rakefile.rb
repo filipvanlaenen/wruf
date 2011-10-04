@@ -76,6 +76,10 @@ task :heckle => "heckle:clean" do
 								.tested_by('flickr_searcher_unit_test.rb') \
 								.skip('download_photo', 'find_next_photo_info', 'get_infoset') \
 								.heckle
+	Heckle.new('PhotoDecorator').defined_in('photo_decorator.rb') \
+								.tested_by('photo_decorator_unit_test.rb') \
+								.skip('convert_svg_to_jpg', 'decorate', 'save_svg_to_file') \
+								.heckle
 end
 
 # Method to read the contents of a file
