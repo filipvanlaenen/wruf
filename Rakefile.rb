@@ -78,7 +78,7 @@ task :heckle => "heckle:clean" do
 								.heckle
 	Heckle.new('PhotoDecorator').defined_in('photo_decorator.rb') \
 								.tested_by('photo_decorator_unit_test.rb') \
-								.skip('convert_svg_to_jpg', 'decorate', 'save_svg_to_file') \
+								.skip('convert_svg_to_jpg', 'create_svg', 'decorate', 'save_svg_to_file') \
 								.heckle
 end
 

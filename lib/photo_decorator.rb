@@ -11,7 +11,25 @@ class PhotoDecorator
 		@height = dims[1]	
 	end
 	
-	def create_svg_file(photo_file_name, photo_info, photo_url)
+	def set_dimensions_on_svg(svg)
+		svg.add_attribute('width', @width)
+		svg.add_attribute('height', @height)
+	end
+	
+	def set_dimensions_on_svg_image(image, photo_info)
+		scale = @height.to_f / photo_info.attributes["o_height"].to_f
+		x_offset = (scale * photo_info.attributes["o_width"].to_f - @width.to_f) / 2.to_f
+		image.add_attribute('x', -x_offset)
+		image.add_attribute('y', '0')
+		image.add_attribute('width', @width + 2.to_f * x_offset)
+		image.add_attribute('height', @height) 
+	end
+	
+	def set_link_on_svg_image(image, photo_file_name)
+		image.add_attribute('xlink:href', photo_file_name)
+	end
+	
+	def create_svg(photo_file_name, photo_info, photo_url)
 		doc = REXML::Document.new
 		doc << REXML::XMLDecl.new('1.0', nil, 'no')
 		doctype = REXML::DocType.new(['svg', 'PUBLIC', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'])
@@ -20,17 +38,13 @@ class PhotoDecorator
 		svg.add_attribute('version', '1.1')
 		svg.add_namespace('http://www.w3.org/2000/svg')
 		svg.add_namespace('xmlns:xlink', 'http://www.w3.org/1999/xlink')
-		svg.add_attribute('width', @width)
-		svg.add_attribute('height', @height)
+		set_dimensions_on_svg(svg)
 		image = REXML::Element.new('image')
-		image.add_attribute('x', '0')
-		image.add_attribute('y', '0')
-		image.add_attribute('width', photo_info.attributes["o_width"])
-		image.add_attribute('height', photo_info.attributes["o_height"])
-		image.add_attribute('xlink:href', photo_file_name)
+		set_dimensions_on_svg_image(image, photo_info)
+		set_link_on_svg_image(image, photo_file_name)
 		svg << image
 		doc << svg
-		return doc.to_s
+		return doc
 	end
 	
 	def get_png_file_name_from_svg_file_name(svg_file_name)
@@ -49,7 +63,7 @@ class PhotoDecorator
 	
 	def write_svg_to_file(svg_file_name, svg)
 		open(svg_file_name, "w") { |file|
-			file.write(svg)
+			file.write(svg.to_s)
 		}
 	end
 
@@ -60,7 +74,7 @@ class PhotoDecorator
 	end
 
 	def decorate(photo_file_name, photo_info, photo_url)
-		svg = create_svg_file(photo_file_name, photo_info, photo_url)
+		svg = create_svg(photo_file_name, photo_info, photo_url)
 		svg_file_name = save_svg_to_file(photo_file_name, svg)
 		png_file_name = convert_svg_to_jpg(svg_file_name)
 		return png_file_name
