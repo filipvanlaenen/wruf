@@ -17,12 +17,15 @@ class PhotoDecorator
 	end
 	
 	def set_dimensions_on_svg_image(image, photo_info)
-		scale = @height.to_f / photo_info.attributes["o_height"].to_f
+		scale_x = @width.to_f / photo_info.attributes["o_width"].to_f
+		scale_y = @height.to_f / photo_info.attributes["o_height"].to_f
+		scale = [scale_x, scale_y].max
 		x_offset = (scale * photo_info.attributes["o_width"].to_f - @width.to_f) / 2.to_f
+		y_offset = (scale * photo_info.attributes["o_height"].to_f - @height.to_f) / 2.to_f
 		image.add_attribute('x', -x_offset)
-		image.add_attribute('y', '0')
+		image.add_attribute('y', -y_offset)
 		image.add_attribute('width', @width + 2.to_f * x_offset)
-		image.add_attribute('height', @height) 
+		image.add_attribute('height', @height + 2.to_f * y_offset) 
 	end
 	
 	def set_link_on_svg_image(image, photo_file_name)
