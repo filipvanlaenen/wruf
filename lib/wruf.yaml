@@ -1,0 +1,11 @@
+--- !ruby/object:WRUF 
+dimensions: 
+- 1280
+- 800
+hours: 24
+tags: 
+- green
+- blue
+- fractal
+- astronomy
+tolerance: 0.2
