@@ -80,6 +80,10 @@ task :heckle => "heckle:clean" do
 								.tested_by('photo_decorator_unit_test.rb') \
 								.skip('convert_svg_to_jpg', 'create_svg', 'decorate', 'save_svg_to_file', 'write_svg_to_file') \
 								.heckle
+	Heckle.new('PhotoHistory').defined_in('photo_history.rb') \
+	                          .tested_by('photo_history_unit_test.rb') \
+	                          .skip('record') \
+	                          .heckle
 end
 
 # Method to read the contents of a file

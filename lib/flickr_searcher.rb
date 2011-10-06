@@ -21,7 +21,7 @@ class FlickrSearcher
 		@tags = tags
 	end
 
-	def get_infoset(tags)
+	def get_infoset(tags, i)
 		uri = URI.parse(FlickRestServicesUri)
 
 		http = Net::HTTP.new(uri.host, uri.port)
@@ -31,6 +31,7 @@ class FlickrSearcher
 				               'extras' => 'o_dims,original_format',
 				               'format' => 'rest',
 				               'media' => 'photos',
+				               'page' => i.to_s,
 				               'safe_search' => '1',
 				               'sort' => 'interestingness-desc',
 				               'tags' => tags.join(','),
@@ -48,18 +49,25 @@ class FlickrSearcher
 		end		
 	end
 	
-	def get_photo_info(info_set)
+	def get_photo_info(info_set, history)
 		return info_set.get_elements("rsp/photos/photo") \
 					   .select{|e| e.attributes["o_width"].to_i >= @width} \
 					   .select{|e| e.attributes["o_height"].to_i >= @height} \
 					   .select{|e| (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) / (@height.to_f / @width.to_f) < 1.to_f + @tolerance} \
 					   .select{|e| (@height.to_f / @width.to_f) / (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) < 1.to_f + @tolerance} \
+					   .reject{|e| history.include?(get_photo_url(e))} \
 					   .first
 	end
 	
-	def find_next_photo_info
-		info_set = get_infoset(@tags)
-		return get_photo_info(info_set)
+	def find_next_photo_info(history)
+		i = 0
+		photo_info = nil
+		while photo_info == nil
+			i = i + 1
+			info_set = get_infoset(@tags, i)
+			photo_info = get_photo_info(info_set, history)
+		end
+		return photo_info
 	end
 	
 	def get_photo_url(photo_info)
