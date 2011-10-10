@@ -11,6 +11,9 @@ VERSION="0.1"
 ACTION="$1"
 
 case "$ACTION" in
+  init)
+    ${WRUFDIR}/wruf_init.sh
+    ;;
   run)
     ${WRUFDIR}/wruf_run.sh
     ;;
