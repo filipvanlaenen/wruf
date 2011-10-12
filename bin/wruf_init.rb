@@ -6,21 +6,31 @@
 #
 
 require 'yaml'
+require 'wruf'
 
 local_wruf_dir = File.expand_path(ARGV[0])
-configuration_yaml = File.join(local_sha1crk_dir, 'wruf.yaml')
+configuration_yaml = File.join(local_wruf_dir, 'wruf.yaml')
 
-wruf = WRUF.new
+if (File.exist?(configuration_yaml))
+	value_status = 'current'
+	wruf = WRUF.load(local_wruf_dir)
+else
+	value_status = 'default'
+	wruf = WRUF.new
+	wruf.dimensions = [1280, 800]
+	wruf.tolerance = 0.2
+	wruf.hours = 24
+end
 
-print "Enter the width of the screen: "
+print "Enter the minimal width for the wallpaper photo [#{value_status} #{wruf.dimensions[0]}]: "
 width = STDIN.readline.chomp.to_i
 
-print "Enter the height of the screen: "
+print "Enter the minimal height for the wallpaper photo [#{value_status} #{wruf.dimensions[1]}]: "
 height = STDIN.readline.chomp.to_i
 
 wruf.dimensions = [width, height]
 
-print "Enter the photo size tolerance [0-100, default 20]: "
+print "Enter the photo size tolerance [0-100, #{value_status} #{(wruf.tolerance * 100).to_i}]: "
 tolerance = STDIN.readline.chomp.to_i
 if (tolerance < 1 || tolerance > 100)
 	tolerance = 0.2
@@ -31,7 +41,7 @@ puts "Registering a tolerance of #{(tolerance * 100).to_i}%."
 
 wruf.tolerance = tolerance
 
-print "Enter the hours: "
+print "Enter the minimal number of hours between wallpaper rotations [#{value_status} #{wruf.hours}]: "
 wruf.hours = STDIN.readline.chomp.to_i
 
 open(configuration_yaml, "w") { |file|

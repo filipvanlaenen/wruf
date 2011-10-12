@@ -20,6 +20,7 @@ cp lib/*.rb "$WRUFDIR/lib"
 
 cp wruf* "$WRUFDIR"
 chmod a+x "$WRUFDIR/wruf.sh"
+chmod a+x "$WRUFDIR/wruf_init.sh"
 chmod a+x "$WRUFDIR/wruf_run.sh"
 ln -f "$WRUFDIR/wruf.sh" /usr/bin/wruf
 

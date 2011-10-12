@@ -11,12 +11,15 @@ require 'yaml'
 
 class WRUF
 
+	attr_accessor :dimensions, :hours, :tolerance
+
 	LocalPhotoFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'local_copy.jpg') 
 	HistoryFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'history.txt') 
-	YamlFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'wruf.yaml') 
+	YamlFileName = 'wruf.yaml'
 	
-	def self.load
-		return YAML::load(read_file(YamlFileName))
+	def self.load(dir)
+		file_name = File.join(dir, YamlFileName)
+		return YAML::load(read_file(file_name))
 	end
 		
 	def self.read_file(file_name)

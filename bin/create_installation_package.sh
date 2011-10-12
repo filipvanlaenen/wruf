@@ -21,6 +21,8 @@ mkdir "$TEMPDIR"
 BINDIR=${SCRIPTDIR}/../bin
 cp ${BINDIR}/install.sh "$TEMPDIR"
 cp ${BINDIR}/wruf.sh "$TEMPDIR"
+cp ${BINDIR}/wruf_init.rb "$TEMPDIR"
+cp ${BINDIR}/wruf_init.sh "$TEMPDIR"
 cp ${BINDIR}/wruf_run.rb "$TEMPDIR"
 cp ${BINDIR}/wruf_run.sh "$TEMPDIR"
 
