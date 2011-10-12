@@ -77,7 +77,7 @@ case "$ACTION" in
     echo "Wallpaper Rotator Using Flickr (WRUF)"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
-    echo "Usage: wruf {init|run|version}" >&2
+    echo "Usage: wruf {init|run|version|warranty|copyright}" >&2
     exit 1
     ;;
 esac
