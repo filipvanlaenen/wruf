@@ -39,9 +39,15 @@ end
 
 print "Enter the minimal width for the wallpaper photo [#{value_status} #{wruf.dimensions[0]}]: "
 width = STDIN.readline.chomp.to_i
+if (width == 0)
+	width = wruf.dimensions[0]
+end
 
 print "Enter the minimal height for the wallpaper photo [#{value_status} #{wruf.dimensions[1]}]: "
 height = STDIN.readline.chomp.to_i
+if (height == 0)
+	height = wruf.dimensions[1]
+end
 
 wruf.dimensions = [width, height]
 
@@ -57,7 +63,10 @@ puts "Registering a tolerance of #{(tolerance * 100).to_i}%."
 wruf.tolerance = tolerance
 
 print "Enter the minimal number of hours between wallpaper rotations [#{value_status} #{wruf.hours}]: "
-wruf.hours = STDIN.readline.chomp.to_i
+hours = STDIN.readline.chomp.to_i
+if (hours != 0)
+	wruf.hours = hours
+end
 
 open(configuration_yaml, "w") { |file|
 	file.write(wruf.to_yaml)

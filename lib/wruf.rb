@@ -24,14 +24,18 @@ require 'yaml'
 class WRUF
 
 	attr_accessor :dimensions, :hours, :tolerance
+	attr_writer :dir
 
-	LocalPhotoFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'local_copy.jpg') 
-	HistoryFileName = File.join(File.expand_path(File.dirname(__FILE__)), 'history.txt') 
+	LocalPhotoFileName = 'local_copy.jpg'
+	HistoryFileName = 'history.txt'
 	YamlFileName = 'wruf.yaml'
 	
 	def self.load(dir)
-		file_name = File.join(dir, YamlFileName)
-		return YAML::load(read_file(file_name))
+		expanded_dir = File.expand_path(dir)
+		file_name = File.join(expanded_dir, YamlFileName)
+		wruf = YAML::load(read_file(file_name))
+		wruf.dir = expanded_dir
+		return wruf
 	end
 		
 	def self.read_file(file_name)
@@ -52,7 +56,7 @@ class WRUF
 	end
 	
 	def too_recent_since_last_rotation?
-		seconds_since_last_rotation = Time.now - File.mtime(HistoryFileName)
+		seconds_since_last_rotation = Time.now - File.mtime(File.join(@dir, HistoryFileName))
 		return (seconds_since_last_rotation < @hours*60*60)
 	end
 
@@ -60,13 +64,13 @@ class WRUF
 		if (too_recent_since_last_rotation?)
 			exit
 		end
-		history = PhotoHistory.load_history(HistoryFileName)
+		history = PhotoHistory.load_history(File.join(@dir, HistoryFileName))
 		searcher = FlickrSearcher.new(@dimensions, @tolerance, @tags)
 		photo_info = searcher.find_next_photo_info(history)
 		photo_url = searcher.get_photo_url(photo_info)
-		searcher.download_photo(photo_url, LocalPhotoFileName)
+		searcher.download_photo(photo_url, File.join(@dir, LocalPhotoFileName))
 		photo_decorator = PhotoDecorator.new(@dimensions)
-		decorated_photo_file_name = photo_decorator.decorate(LocalPhotoFileName, photo_info, photo_url)
+		decorated_photo_file_name = photo_decorator.decorate(File.join(@dir, LocalPhotoFileName), photo_info, photo_url)
 		set_pic_as_background(decorated_photo_file_name)
 		history.record(photo_url)
 	end

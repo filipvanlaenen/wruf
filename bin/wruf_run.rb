@@ -19,4 +19,6 @@
 # Script to start WRUF.
 #
 
-WRUF.load.run
+require 'wruf'
+
+WRUF.load(ARGV[0]).run

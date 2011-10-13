@@ -29,7 +29,7 @@ if [ ! -d "$LOCALWRUFDIR" ]; then
 	exit
 fi
 
-if [ ! -e "$LOCALWRUFDIR/wruf-config.yaml" ]; then
+if [ ! -e "$LOCALWRUFDIR/wruf.yaml" ]; then
 	echo "Local WRUF configuration file does not exist -- (re)run initialization before trying to run WRUF."
 	exit
 fi
