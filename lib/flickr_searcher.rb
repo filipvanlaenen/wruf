@@ -40,16 +40,19 @@ class FlickrSearcher
 
 		http = Net::HTTP.new(uri.host, uri.port)
 		request = Net::HTTP::Get.new(uri.path)
-		request.set_form_data({'method' => SearchMethod,
-				               'api_key' => ApiKey,
-				               'extras' => 'o_dims,original_format',
-				               'format' => 'rest',
-				               'media' => 'photos',
-				               'page' => i.to_s,
-				               'safe_search' => '1',
-				               'sort' => 'interestingness-desc',
-				               'tags' => tags.join(','),
-				               'tag_mode' => 'any'})
+		form_data = {'method' => SearchMethod,
+			           'api_key' => ApiKey,
+			           'extras' => 'o_dims,original_format',
+			           'format' => 'rest',
+			           'media' => 'photos',
+			           'page' => i.to_s,
+			           'safe_search' => '1',
+			           'sort' => 'interestingness-desc',
+			           'tag_mode' => 'any'}
+		if (tags != nil)
+			form_data['tags'] = tags.join(',')
+		end
+		request.set_form_data(form_data)
 
 		request = Net::HTTP::Get.new(uri.path + '?' + request.body)
 

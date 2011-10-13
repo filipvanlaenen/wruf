@@ -55,8 +55,15 @@ class WRUF
 		system 'gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"'
 	end
 	
+	def history_file_name
+		return File.join(@dir, HistoryFileName)
+	end
+	
 	def too_recent_since_last_rotation?
-		seconds_since_last_rotation = Time.now - File.mtime(File.join(@dir, HistoryFileName))
+		if (!File.exist?(history_file_name))
+			return false
+		end
+		seconds_since_last_rotation = Time.now - File.mtime(history_file_name)
 		return (seconds_since_last_rotation < @hours*60*60)
 	end
 
@@ -64,7 +71,7 @@ class WRUF
 		if (too_recent_since_last_rotation?)
 			exit
 		end
-		history = PhotoHistory.load_history(File.join(@dir, HistoryFileName))
+		history = PhotoHistory.load_history(history_file_name)
 		searcher = FlickrSearcher.new(@dimensions, @tolerance, @tags)
 		photo_info = searcher.find_next_photo_info(history)
 		photo_url = searcher.get_photo_url(photo_info)
