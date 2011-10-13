@@ -47,7 +47,8 @@ class FlickrSearcherUnitTest < Test::Unit::TestCase
 EOF
 	SampleFlickrResponse = REXML::Document.new(SampleFlickrResponseString)
 	SampleFlickrPhoto1Id = '6072738710'
-	SampleFlickrPhoto1Url = 'http://farm7.static.flickr.com/6210/6072738710_59cff4fe40_o.jpg'
+	SampleFlickrPhoto1FileName = SampleFlickrPhoto1Id + '_59cff4fe40_o.jpg'
+	SampleFlickrPhoto1Url = 'http://farm7.static.flickr.com/6210/' + SampleFlickrPhoto1FileName
 	SampleFlickrPhoto1Info = '<photo id="6072738710" owner="38181284@N06" secret="522ec2a319" server="6210" farm="7" title="Dubrovnik Moonlight (Explored)" ispublic="1" isfriend="0" isfamily="0" o_width="3976" o_height="2720" originalsecret="59cff4fe40" originalformat="jpg" />'
 	SampleFlickrPhoto2Id = '6045494525'
 	SampleFlickrPhoto2Url = 'http://farm7.static.flickr.com/6197/6045494525_7058d4bfdc_o.jpg'
@@ -99,4 +100,9 @@ EOF
 		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentOriginalSecretInfo).elements["photo"]
 		assert_equal SampleFlickrPhotoWithDifferentOriginalSecretUrl, @searcher.get_photo_url(photo_info)
 	end
+	
+	def test_get_photo_file_name
+		assert_equal SampleFlickrPhoto1FileName, @searcher.get_photo_file_name(SampleFlickrPhoto1Url)
+	end
+	
 end

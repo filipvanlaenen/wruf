@@ -102,6 +102,10 @@ class FlickrSearcher
 		return "http://farm#{farm_id}.static.flickr.com/#{server_id}/#{id}_#{secret}_o.#{format}"
 	end
 	
+	def get_photo_file_name(url)
+		return /.*\/([^\/]*)$/.match(url)[1]
+	end
+	
 	def download_photo(photo_url, target)
 		uri = URI.parse(photo_url)
 		Net::HTTP.start(uri.host) { |http|
