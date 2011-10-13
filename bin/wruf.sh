@@ -26,7 +26,7 @@
 #
 
 WRUFDIR="/opt/wruf"
-VERSION="0.1"
+VERSION="0.2"
 COPYRIGHTYEAR="2011"
 ACTION="$1"
 
