@@ -14,6 +14,8 @@
 #
 
 require 'flickr_searcher'
+require 'rubygems'
+require 'log4r'
 require 'photo_decorator'
 require 'photo_history'
 require 'yaml'
@@ -23,11 +25,14 @@ require 'yaml'
 #
 class WRUF
 
+	include Log4r
+
 	attr_accessor :dimensions, :hours, :tolerance
 	attr_writer :dir
 
 	LocalPhotoFileName = 'local_copy.jpg'
 	HistoryFileName = 'history.txt'
+	LogFileName = 'wruf.log'
 	YamlFileName = 'wruf.yaml'
 	
 	def self.load(dir)
@@ -60,24 +65,40 @@ class WRUF
 	end
 	
 	def too_recent_since_last_rotation?
+		@log.debug("Checking the history file at #{history_file_name} to find out when the wallpaper has been rotated the last time.")
 		if (!File.exist?(history_file_name))
 			return false
 		end
 		seconds_since_last_rotation = Time.now - File.mtime(history_file_name)
+		@log.debug("Wallpaper has been rotated #{seconds_since_last_rotation} seconds ago.")
 		return (seconds_since_last_rotation < @hours*60*60)
+	end
+	
+	def initialize_logging
+		@log = Logger.new('log')
+		@log.level = INFO
+		file_outputter = FileOutputter.new('fileOutputter', :filename =>  File.join(@dir, LogFileName), :trunc => false)
+		pattern_formatter = PatternFormatter.new(:pattern => "%d %l: %M")
+		file_outputter.formatter = pattern_formatter
+		@log.outputters = file_outputter
 	end
 
 	def run
+	    initialize_logging
 		if (too_recent_since_last_rotation?)
+			@log.debug("Wallpaper has been rotated less than #{@hours} hours ago; won't rotate it again now.")
 			exit
 		end
 		history = PhotoHistory.load_history(history_file_name)
 		searcher = FlickrSearcher.new(@dimensions, @tolerance, @tags)
 		photo_info = searcher.find_next_photo_info(history)
 		photo_url = searcher.get_photo_url(photo_info)
-		searcher.download_photo(photo_url, File.join(@dir, LocalPhotoFileName))
+		@log.info("Going to use the photo at #{photo_url} as the new wallpaper.")
+		photo_file_name = searcher.get_photo_file_name(photo_url)
+		photo_path = File.join(File.join(@dir, 'cache'), photo_file_name)
+		searcher.download_photo(photo_url, photo_path)
 		photo_decorator = PhotoDecorator.new(@dimensions)
-		decorated_photo_file_name = photo_decorator.decorate(File.join(@dir, LocalPhotoFileName), photo_info, photo_url)
+		decorated_photo_file_name = photo_decorator.decorate(photo_path, photo_info, photo_url)
 		set_pic_as_background(decorated_photo_file_name)
 		history.record(photo_url)
 	end
