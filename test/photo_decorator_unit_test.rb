@@ -27,17 +27,23 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	
 	Width = 1280
 	Height = 800
+	PhotoTitle = 'Holding on'
 	Photo1Width = 2560
 	Photo1Height = 1600
-	Photo1Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"Holding on\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo1Width}\" o_height=\"#{Photo1Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
+	Photo1Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo1Width}\" o_height=\"#{Photo1Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']
 	Photo2Width = 1480
 	Photo2Height = 800
-	Photo2Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"Holding on\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo2Width}\" o_height=\"#{Photo2Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
+	Photo2Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo2Width}\" o_height=\"#{Photo2Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
 	Photo3Width = 1280
 	Photo3Height = 1000
-	Photo3Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"Holding on\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo3Width}\" o_height=\"#{Photo3Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
+	Photo3Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo3Width}\" o_height=\"#{Photo3Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
 	PhotoUrl = 'http://bar.com/foo.jpg'
 	PhotoFileName = 'foo.jpg'
+	FontFamily = 'FranklinGothic'
+	TextFill = '#ffff00'
+	TitleTextIndex = 0
+	UrlTextIndex = 1
+	UrlTextFontSize = 12
 	
 	def setup
 		@decorator = PhotoDecorator.new([Width, Height])
@@ -81,7 +87,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 
 	def test_svg_contains_image
-		assert_not_nil @svg1.get_elements('svg/image')
+		assert !@svg1.get_elements('svg/image').empty?
 	end
 
 	def test_svg1_image_has_correct_x
@@ -134,5 +140,61 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	
 	def test_svg1_image_has_correct_xlink_href
 		assert_equal PhotoFileName, @svg1.get_elements('svg/image').first.attributes['xlink:href']
+	end
+	
+	def test_svg_contains_two_texts
+		assert_equal 2, @svg1.get_elements('svg/text').size
+	end
+
+	def test_svg_title_text_has_correct_x
+		assert_equal Width / 10, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['x'].to_i
+	end
+	
+	def test_svg_title_text_has_correct_y
+		assert_equal 9 * Height / 10 - UrlTextFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['y'].to_i
+	end
+	
+	def test_svg_title_text_has_correct_font_family
+		assert_equal FontFamily, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-family']
+	end
+	
+	def test_svg_title_text_has_correct_font_weight
+		assert_equal 'bold', @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-weight']
+	end
+
+	def test_svg_title_text_has_correct_font_size
+		assert_equal 16, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-size'].to_i
+	end
+
+	def test_svg_title_text_has_correct_fill
+		assert_equal TextFill, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['fill']
+	end
+
+	def test_svg_title_text_has_correct_content
+		assert_equal PhotoTitle, @svg1.get_elements('svg/text')[TitleTextIndex].text
+	end
+	
+	def test_svg_url_text_has_correct_x
+		assert_equal Width / 10, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['x'].to_i
+	end
+	
+	def test_svg_url_text_has_correct_y
+		assert_equal 9 * Height / 10, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['y'].to_i
+	end
+	
+	def test_svg_url_text_has_correct_font_family
+		assert_equal FontFamily, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-family']
+	end
+	
+	def test_svg_url_text_has_correct_font_size
+		assert_equal UrlTextFontSize, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-size'].to_i
+	end
+
+	def test_svg_url_text_has_correct_fill
+		assert_equal TextFill, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['fill']
+	end
+
+	def test_svg_url_text_has_correct_content
+		assert_equal PhotoUrl, @svg1.get_elements('svg/text')[UrlTextIndex].text
 	end
 end

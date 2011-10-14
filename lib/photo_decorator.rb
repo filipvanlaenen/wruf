@@ -20,6 +20,11 @@
 #
 class PhotoDecorator
 
+	FontFamily = 'FranklinGothic'
+	Bold = 'bold'
+	TextFill = '#ffff00'
+	UrlTextFontSize = 12
+
 	def initialize(dims)
 		@width = dims[0]
 		@height = dims[1]	
@@ -31,11 +36,11 @@ class PhotoDecorator
 	end
 	
 	def set_dimensions_on_svg_image(image, photo_info)
-		scale_x = @width.to_f / photo_info.attributes["o_width"].to_f
-		scale_y = @height.to_f / photo_info.attributes["o_height"].to_f
+		scale_x = @width.to_f / photo_info.attributes['o_width'].to_f
+		scale_y = @height.to_f / photo_info.attributes['o_height'].to_f
 		scale = [scale_x, scale_y].max
-		x_offset = (scale * photo_info.attributes["o_width"].to_f - @width.to_f) / 2.to_f
-		y_offset = (scale * photo_info.attributes["o_height"].to_f - @height.to_f) / 2.to_f
+		x_offset = (scale * photo_info.attributes['o_width'].to_f - @width.to_f) / 2.to_f
+		y_offset = (scale * photo_info.attributes['o_height'].to_f - @height.to_f) / 2.to_f
 		image.add_attribute('x', -x_offset)
 		image.add_attribute('y', -y_offset)
 		image.add_attribute('width', @width + 2.to_f * x_offset)
@@ -44,6 +49,32 @@ class PhotoDecorator
 	
 	def set_link_on_svg_image(image, photo_file_name)
 		image.add_attribute('xlink:href', photo_file_name)
+	end
+	
+	def create_text
+		text = REXML::Element.new('text')
+		text.add_attribute('font-family', FontFamily)
+		text.add_attribute('fill', TextFill)
+		return text
+	end
+	
+	def create_title_text(photo_info)
+		text = create_text
+		text.add_attribute('font-size', 16)
+		text.add_attribute('font-weight', Bold)
+		text.add_attribute('x', @width / 10)
+		text.add_attribute('y', 9 * @height / 10 - UrlTextFontSize)
+		text.text = photo_info.attributes['title']
+		return text
+	end
+	
+	def create_url_text(photo_url)
+		text = create_text
+		text.add_attribute('x', @width / 10)
+		text.add_attribute('y', 9 * @height / 10)
+		text.add_attribute('font-size', UrlTextFontSize)
+		text.text = photo_url
+		return text
 	end
 	
 	def create_svg(photo_file_name, photo_info, photo_url)
@@ -60,6 +91,8 @@ class PhotoDecorator
 		set_dimensions_on_svg_image(image, photo_info)
 		set_link_on_svg_image(image, photo_file_name)
 		svg << image
+		svg << create_title_text(photo_info)
+		svg << create_url_text(photo_url)
 		doc << svg
 		return doc
 	end
