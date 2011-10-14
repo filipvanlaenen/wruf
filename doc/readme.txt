@@ -36,3 +36,18 @@ These are the installation instructions for WRUF.
 
 * Try to run WRUF using the following command:
 	wruf init
+
+3. RUNNING WRUF
+
+* You can run WRUF using the following command:
+    wruf run
+
+4. ADDING WRUF TO CRONTAB
+
+* You can add WRUF to the Crontab using the following command:
+	crontab -e
+  It's probably a good idea to let WRUF run once every hour. To do this, add the following line to
+  Crontab, replacing '1' with the appropriate number for the minutes (anything from 0 to 59 will
+  do):
+    1 * * * * /usr/bin/wruf run
+  
