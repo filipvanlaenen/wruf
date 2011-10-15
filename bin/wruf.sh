@@ -18,11 +18,12 @@
 
 #
 # Central point to run WRUF. The script accepts the following arguments:
-# - init: To initialized WRUF.
+# - init: To initialize WRUF.
 # - run: To run WRUF.
+# - tags: To manage the tags.
 # - current dislike: Dislikes the current wallpaper.
-# - help: Help information.
-# - version: To display version information.
+# - help: To display the help information.
+# - version: To display the version information.
 # - copyright: To display the copyright information.
 # - warranty: To display the warranty information.
 #
@@ -39,6 +40,9 @@ case "$ACTION" in
   run)
     ${WRUFDIR}/wruf_run.sh
     ;;
+  tags)
+    ${WRUFDIR}/wruf_tags.sh
+    ;;
   current)
     ${WRUFDIR}/wruf_current.sh $2
     ;;
@@ -52,6 +56,7 @@ case "$ACTION" in
     echo "where actions and parameters include:"
     echo "  init              initialize WRUF"
     echo "  run               run WRUF"
+    echo "  tags              manage the tags used by WRUF in an interactive dialogue"
     echo "  current dislike   rotate the wallpaper regardless of when it was rotated last"
     echo "  help              show this message"
     echo "  version           show the version information"
@@ -98,7 +103,7 @@ case "$ACTION" in
     echo "Wallpaper Rotator Using Flickr (WRUF)"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
-    echo "Usage: wruf {init|run|current|help|version|warranty|copyright}" >&2
+    echo "Usage: wruf {init|run|tags|current|help|version|warranty|copyright}" >&2
     echo "Type 'wruf help' to get more information."
     exit 1
     ;;

@@ -44,6 +44,8 @@ cp ${BINDIR}/wruf_init.rb "$TEMPDIR"
 cp ${BINDIR}/wruf_init.sh "$TEMPDIR"
 cp ${BINDIR}/wruf_run.rb "$TEMPDIR"
 cp ${BINDIR}/wruf_run.sh "$TEMPDIR"
+cp ${BINDIR}/wruf_tags.rb "$TEMPDIR"
+cp ${BINDIR}/wruf_tags.sh "$TEMPDIR"
 
 DOCDIR=${SCRIPTDIR}/../doc
 cp ${DOCDIR}/readme.txt "$TEMPDIR"

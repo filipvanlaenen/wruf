@@ -28,12 +28,17 @@ class WRUF
 	include Log4r
 
 	attr_accessor :dimensions, :hours, :tolerance
+	attr_reader :tags
 	attr_writer :dir
 
 	LocalPhotoFileName = 'local_copy.jpg'
 	HistoryFileName = 'history.txt'
 	LogFileName = 'wruf.log'
 	YamlFileName = 'wruf.yaml'
+	
+	def initialize
+		@tags = []
+	end
 	
 	def self.load(dir)
 		expanded_dir = File.expand_path(dir)
