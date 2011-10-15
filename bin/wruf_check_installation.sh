@@ -17,13 +17,22 @@
 #
 
 #
-# Starts to run WRUF
+# Checks that WRUF has been initialized.
 #
 
-WRUFDIR="/opt/wruf"
 LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
 
-${WRUFDIR}/wruf_check_installation.sh
+if [ ! -d "$LOCALWRUFDIR" ]; then
+	echo "Local WRUF directory does not exist -- (re)run initialization before trying to run WRUF."
+	exit
+fi
 
-$RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_run.rb" "${LOCALWRUFDIR}" &
+if [ ! -e "$LOCALWRUFDIR/wruf.yaml" ]; then
+	echo "Local WRUF configuration file does not exist -- (re)run initialization before trying to run WRUF."
+	exit
+fi
+
+if [ ! -d "$LOCALWRUFDIR/cache" ]; then
+	echo "Local WRUF cache directory does not exist -- (re)run initialization before trying to run WRUF."
+	exit
+fi

@@ -17,13 +17,25 @@
 #
 
 #
-# Starts to run WRUF
+# Does an operation on the current wallpaper:
+#  - Dislike: Rotates the wallpaper regardless of when it was rotated last.
 #
 
 WRUFDIR="/opt/wruf"
 LOCALWRUFDIR="${HOME}/.wruf"
 RUBY="ruby"
 
-${WRUFDIR}/wruf_check_installation.sh
+OPERATION="$1"
 
-$RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_run.rb" "${LOCALWRUFDIR}" &
+case "$OPERATION" in
+  dislike)
+    ${WRUFDIR}/wruf_check_installation.sh
+    $RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_current_dislike.rb" "${LOCALWRUFDIR}" &
+    ;;
+  *)
+    echo "Allowed operations on the current wallpaper:"
+    echo " - dislike: Rotates the wallpaper regardless of when it was rotated last."
+    exit 1
+    ;;
+esac
+

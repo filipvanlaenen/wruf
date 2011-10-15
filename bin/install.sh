@@ -36,8 +36,10 @@ cp lib/*.rb "$WRUFDIR/lib"
 
 cp wruf* "$WRUFDIR"
 chmod a+x "$WRUFDIR/wruf.sh"
+chmod a+x "$WRUFDIR/wruf_check_installation.sh"
 chmod a+x "$WRUFDIR/wruf_init.sh"
 chmod a+x "$WRUFDIR/wruf_run.sh"
+chmod a+x "$WRUFDIR/wruf_current.sh"
 ln -f "$WRUFDIR/wruf.sh" /usr/bin/wruf
 
 LOG4R=$(gem list log4r | awk '/log4r/ {print $1}')

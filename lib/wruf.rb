@@ -83,9 +83,11 @@ class WRUF
 		@log.outputters = file_outputter
 	end
 
-	def run
+	def run(override_time = false)
 	    initialize_logging
-		if (too_recent_since_last_rotation?)
+	    if (override_time)
+	    	@log.info("Not checking when the wallpaper was rotated for the last time; user doesn't like the current wallpaper.")
+	    elsif (too_recent_since_last_rotation?)
 			@log.debug("Wallpaper has been rotated less than #{@hours} hours ago; won't rotate it again now.")
 			exit
 		end

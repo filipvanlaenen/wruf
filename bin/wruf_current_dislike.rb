@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # Wallpaper Rotator Using Flickr (WRUF)
 # Copyright © 2011 Filip van Laenen <f.a.vanlaenen@ieee.org>
@@ -17,13 +16,9 @@
 #
 
 #
-# Starts to run WRUF
+# Script to start WRUF in the case the user doesn't like the current wallpaper.
 #
 
-WRUFDIR="/opt/wruf"
-LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
+require 'wruf'
 
-${WRUFDIR}/wruf_check_installation.sh
-
-$RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_run.rb" "${LOCALWRUFDIR}" &
+WRUF.load(ARGV[0]).run(true)
