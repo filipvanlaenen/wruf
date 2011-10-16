@@ -58,11 +58,11 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 		
 	def test_png_for_svg_at_the_end
-		assert_get_png_file_name_from_svg_file_name_correct('foo.svg', 'foo.png')
+		assert_get_png_file_name_from_svg_file_name_correct('foo-decorated.svg', 'foo-decorated.png')
 	end
 
 	def test_png_for_svg_in_the_middle
-		assert_get_png_file_name_from_svg_file_name_correct('foo.svg.bar.svg', 'foo.svg.bar.png')
+		assert_get_png_file_name_from_svg_file_name_correct('foo.svg.bar-decorated.svg', 'foo.svg.bar-decorated.png')
 	end
 
 	def assert_get_svg_file_name_from_photo_file_name_correct(photo_file_name, expected_svg_file_name)
@@ -71,11 +71,11 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 	
 	def test_svg_for_jpg_at_the_end
-		assert_get_svg_file_name_from_photo_file_name_correct('foo.jpg', 'foo.svg')
+		assert_get_svg_file_name_from_photo_file_name_correct('foo.jpg', 'foo-decorated.svg')
 	end
 	
 	def test_svg_for_png_at_the_end
-		assert_get_svg_file_name_from_photo_file_name_correct('foo.png', 'foo.svg')
+		assert_get_svg_file_name_from_photo_file_name_correct('foo.png', 'foo-decorated.svg')
 	end
 
 	def test_svg_has_correct_width

@@ -55,8 +55,9 @@ EOF
 	SampleFlickrPhoto3Info = '<photo id="91957795" owner="86685058@N00" secret="5a27611762" server="42" farm="1" title="Lady Lula\'s Bright Eyed Stare" ispublic="1" isfriend="0" isfamily="0" />'
 	SampleFlickrPhoto3Url = 'http://farm1.static.flickr.com/42/91957795_5a27611762_o.jpg'
 	SampleFlickrPhotoWithDifferentFormatInfo = '<photo id="41942696" owner="23548413@N00" secret="ac7de727a7" server="28" farm="1" title="Holding on" ispublic="1" isfriend="0" isfamily="0" o_width="1023" o_height="628" originalsecret="ac7de727a7" originalformat="png" />'
+	SampleFlickrPhotoWithDifferentFormatFileName = '41942696_ac7de727a7_o.png'
+	SampleFlickrPhotoWithDifferentFormatUrl = 'http://farm1.static.flickr.com/28/' + SampleFlickrPhotoWithDifferentFormatFileName
 	SampleFlickrPhotoWithDifferentOriginalSecretInfo = '<photo id="41942696" owner="23548413@N00" secret="ac7de727a7" server="28" farm="1" title="Holding on" ispublic="1" isfriend="0" isfamily="0" o_width="1023" o_height="628" originalsecret="5a27611762" originalformat="jpg" />'
-	SampleFlickrPhotoWithDifferentFormatUrl = 'http://farm1.static.flickr.com/28/41942696_ac7de727a7_o.png'
 	SampleFlickrPhotoWithDifferentOriginalSecretUrl = 'http://farm1.static.flickr.com/28/41942696_5a27611762_o.jpg'
 	HistoryFileName = 'history.txt'
 
@@ -105,4 +106,7 @@ EOF
 		assert_equal SampleFlickrPhoto1FileName, @searcher.get_photo_file_name(SampleFlickrPhoto1Url)
 	end
 	
+	def test_get_photo_file_name_with_different_format
+		assert_equal SampleFlickrPhotoWithDifferentFormatFileName, @searcher.get_photo_file_name(SampleFlickrPhotoWithDifferentFormatUrl)
+	end
 end

@@ -108,7 +108,7 @@ class PhotoDecorator
 	end
 	
 	def get_svg_file_name_from_photo_file_name(photo_file_name)
-		return photo_file_name.sub(/\.\w+$/, '.svg')
+		return photo_file_name.sub(/\.\w+$/, '-decorated.svg')
 	end
 	
 	def write_svg_to_file(svg_file_name, svg)
