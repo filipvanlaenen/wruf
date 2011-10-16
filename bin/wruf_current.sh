@@ -30,7 +30,7 @@ OPERATION="$1"
 case "$OPERATION" in
   dislike)
     ${WRUFDIR}/wruf_check_installation.sh
-    $RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_current_dislike.rb" "${LOCALWRUFDIR}" &
+    $RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_current_dislike.rb" "${LOCALWRUFDIR}"
     ;;
   *)
     echo "Allowed operations on the current wallpaper:"

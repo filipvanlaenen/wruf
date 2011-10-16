@@ -26,7 +26,7 @@ RUBY="ruby"
 
 ${WRUFDIR}/wruf_check_installation.sh
 
-echo "Wallpaper Rotator Using Flickr (WRUF) - Tag Management"
+echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION} - Tag Management"
 echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
 echo
 

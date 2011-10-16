@@ -29,7 +29,7 @@
 #
 
 WRUFDIR="/opt/wruf"
-VERSION="0.2"
+VERSION="1.0"
 COPYRIGHTYEAR="2011"
 ACTION="$1"
 
@@ -47,7 +47,7 @@ case "$ACTION" in
     ${WRUFDIR}/wruf_current.sh $2
     ;;
   help)
-    echo "Wallpaper Rotator Using Flickr (WRUF)"
+    echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION}"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
     echo "Usage:"
@@ -64,14 +64,14 @@ case "$ACTION" in
     echo "  warranty          show the warranty information"
     ;;
   version)
-    echo "Wallpaper Rotator Using Flickr (WRUF) version ${VERSION}"
+    echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION}"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo "This program comes with ABSOLUTELY NO WARRANTY; for details run 'wruf warranty'."
     echo "This is free software, and you are welcome to redistribute it"
     echo "under certain conditions; run 'wruf copyright' for details."
     ;;
   copyright)
-    echo "Wallpaper Rotator Using Flickr (WRUF)"
+    echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION}"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
     echo "This program is free software: you can redistribute it and/or modify"
@@ -88,7 +88,7 @@ case "$ACTION" in
     echo "along with this program.  If not, see <http://www.gnu.org/licenses/>."
     ;;
   warranty)
-    echo "Wallpaper Rotator Using Flickr (WRUF)"
+    echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION}"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
     echo "There is no warranty for the program, to the extent permitted by applicable law."
@@ -100,7 +100,7 @@ case "$ACTION" in
     echo "defective, you assume the cost of all necessary servicing, repair or correction."
     ;;
   *)
-    echo "Wallpaper Rotator Using Flickr (WRUF)"
+    echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION}"
     echo "Copyright © ${COPYRIGHTYEAR} Filip van Laenen <f.a.vanlaenen@ieee.org>"
     echo
     echo "Usage: wruf {init|run|tags|current|help|version|warranty|copyright}" >&2
