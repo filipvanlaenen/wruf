@@ -43,3 +43,5 @@ fi
 $RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_init.rb" "${LOCALWRUFDIR}" 
 
 echo "Initialization of WRUF done."
+
+echo "Use 'wruf tags' to set the tags to be used by WRUF."

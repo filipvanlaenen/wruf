@@ -36,6 +36,8 @@ These are the installation instructions for WRUF.
 
 * Try to run WRUF using the following command:
 	wruf init
+* Set the tags to be used by WRUF using the following command:
+    wruf tags
 
 3. RUNNING WRUF
 
