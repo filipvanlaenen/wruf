@@ -60,9 +60,29 @@ class WRUF
 		return content
 	end		
 
+	def get_ubuntu_release
+		return %x[lsb_release -rs]
+	end
+	
+	def ubuntu_release_compare(a, b)
+		as = a.split('.')
+		bs = b.split('.')
+		if (as.first.to_i == bs.first.to_i)
+			return as.last.to_i <=> bs.last.to_i
+		else
+			return as.first.to_i <=> bs.first.to_i
+		end
+	end
+
 	def set_pic_as_background(pic_filename)
-		system "gconftool-2 -t string --set /desktop/gnome/background/picture_filename #{pic_filename}"
-		system 'gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"'
+		ubuntu_release = get_ubuntu_release
+		if (ubuntu_release_compare(ubuntu_release, '11.10') < 0)
+			system "gconftool-2 -t string --set /desktop/gnome/background/picture_filename #{pic_filename}"
+			system 'gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"'
+		else
+			system "gsettings set org.gnome.desktop.background picture-uri 'file://#{pic_filename}'"
+			system 'gsettings set org.gnome.desktop.background picture-options \'centered\''
+		end
 	end
 	
 	def history_file_name
