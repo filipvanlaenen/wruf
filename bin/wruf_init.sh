@@ -22,10 +22,6 @@
 
 echo "Initializing WRUF:"
 
-WRUFDIR="/opt/wruf"
-LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
-
 if [ -d "$LOCALWRUFDIR" ]; then
 	echo "Local WRUF directory already exists."
 else

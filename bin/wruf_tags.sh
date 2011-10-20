@@ -20,10 +20,6 @@
 # Starts an interactive dialogue with the user to manage the tags.
 #
 
-WRUFDIR="/opt/wruf"
-LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
-
 ${WRUFDIR}/wruf_check_installation.sh
 
 echo "Wallpaper Rotator Using Flickr (WRUF) v${VERSION} - Tag Management"

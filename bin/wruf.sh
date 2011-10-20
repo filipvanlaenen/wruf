@@ -28,10 +28,24 @@
 # - warranty: To display the warranty information.
 #
 
-WRUFDIR="/opt/wruf"
-VERSION="1.0"
-COPYRIGHTYEAR="2011"
 ACTION="$1"
+
+export WRUFDIR="/opt/wruf"
+export LOCALWRUFDIR="${HOME}/.wruf"
+export RUBY="ruby"
+
+# The following part is only needed to run WRUF from Cron.
+user=$( whoami )
+pid=$( pgrep -u $user gnome-panel )
+
+for dbusenv in $pid; do
+	DBUS_SESSION_BUS_ADDRESS=$( grep -z DBUS_SESSION_BUS_ADDRESS /proc/$pid/environ | sed -e 's/DBUS_SESSION_BUS_ADDRESS=//' )
+	data="DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
+	eval "export $data"
+done
+
+VERSION="1.1a1"
+COPYRIGHTYEAR="2011"
 
 case "$ACTION" in
   init)

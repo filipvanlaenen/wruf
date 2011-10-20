@@ -20,10 +20,6 @@
 # Starts to run WRUF
 #
 
-WRUFDIR="/opt/wruf"
-LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
-
 ${WRUFDIR}/wruf_check_installation.sh
 
 $RUBY -I "${WRUFDIR}/lib" "${WRUFDIR}/wruf_run.rb" "${LOCALWRUFDIR}" &

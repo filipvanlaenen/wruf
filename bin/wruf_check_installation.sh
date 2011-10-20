@@ -20,8 +20,6 @@
 # Checks that WRUF has been initialized.
 #
 
-LOCALWRUFDIR="${HOME}/.wruf"
-
 if [ ! -d "$LOCALWRUFDIR" ]; then
 	echo "Local WRUF directory does not exist -- (re)run initialization before trying to run WRUF."
 	exit

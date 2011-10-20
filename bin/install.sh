@@ -23,7 +23,6 @@
 #
 
 WRUFDIR="/opt/wruf"
-VERSION="1.0"
 
 if [ -d "$WRUFDIR" ]; then
     rm -R "$WRUFDIR"

@@ -21,10 +21,6 @@
 #  - Dislike: Rotates the wallpaper regardless of when it was rotated last.
 #
 
-WRUFDIR="/opt/wruf"
-LOCALWRUFDIR="${HOME}/.wruf"
-RUBY="ruby"
-
 OPERATION="$1"
 
 case "$OPERATION" in
