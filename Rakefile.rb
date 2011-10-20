@@ -56,7 +56,7 @@ task :rcov => "rcov:clean"
 			t.test_files = FileList["test/*_#{target}_test.rb"]
 			t.output_dir = "qa/rcov/#{target}"
 			t.verbose = true
-			t.rcov_opts << '--aggregate rcov.data'
+			t.rcov_opts << '-x "\A/usr/local/lib,\A/var/lib/gems" --aggregate rcov.data'			
 		end
 	end
 	task :rcov => "rcov:#{target}"
