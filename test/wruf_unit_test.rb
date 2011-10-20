@@ -28,6 +28,11 @@ class WrufUnitTest < Test::Unit::TestCase
 		@wruf = WRUF.new
 	end
 	
+	def test_history_file_name
+		@wruf.dir = '/foo'
+		assert_equal '/foo/history.txt', @wruf.history_file_name
+	end
+	
 	def test_ubuntu_release_9_04_before_12_04
 		assert @wruf.ubuntu_release_compare('9.04', '12.04') < 0
 	end
@@ -38,6 +43,10 @@ class WrufUnitTest < Test::Unit::TestCase
 	
 	def test_ubuntu_release_11_04_before_12_04
 		assert @wruf.ubuntu_release_compare('11.04', '12.04') < 0
+	end
+
+	def test_ubuntu_release_12_04_after_11_04
+		assert @wruf.ubuntu_release_compare('12.04', '11.04') > 0
 	end
 
 	def test_ubuntu_release_11_04_equals_11_04

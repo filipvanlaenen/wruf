@@ -91,6 +91,10 @@ end
 
 desc "Mutation testing with Heckle"
 task :heckle => "heckle:clean" do
+	Heckle.new('WRUF').defined_in('wruf.rb') \
+	                          .tested_by('wruf_unit_test.rb') \
+	                          .skip('initialize_logging', 'run', 'set_pic_as_background', 'too_recent_since_last_rotation?') \
+	                          .heckle
 	Heckle.new('FlickrSearcher').defined_in('flickr_searcher.rb') \
 								.tested_by('flickr_searcher_unit_test.rb') \
 								.skip('download_photo', 'find_next_photo_info', 'get_infoset') \
