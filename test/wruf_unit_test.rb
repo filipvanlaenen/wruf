@@ -24,6 +24,8 @@ require 'test/unit'
 
 class WrufUnitTest < Test::Unit::TestCase
 	
+	SecondsPerMinute = 60
+	
 	def setup
 		@wruf = WRUF.new
 	end
@@ -32,6 +34,35 @@ class WrufUnitTest < Test::Unit::TestCase
 		@wruf.dir = '/foo'
 		assert_equal '/foo/history.txt', @wruf.history_file_name
 	end
+	
+	# too_few_seconds_since_last_rotation?
+	
+	def test_zero_seconds_since_last_rotation_is_too_recent
+		@wruf.hours = 1
+		assert @wruf.too_few_seconds_since_last_rotation?(0)
+	end
+
+	def test_fifty_five_minutes_minus_one_second_since_last_rotation_is_too_recent_if_rotation_after_one_hour
+		@wruf.hours = 1
+		assert @wruf.too_few_seconds_since_last_rotation?(55*SecondsPerMinute - 1)
+	end
+	
+	def test_fifty_five_minutes_since_last_rotation_is_not_too_recent_if_rotation_after_one_hour
+		@wruf.hours = 1
+		assert !@wruf.too_few_seconds_since_last_rotation?(55*SecondsPerMinute)
+	end
+
+	def test_five_hundred_ninety_five_minutes_minus_one_second_since_last_rotation_is_too_recent_if_rotation_after_ten_hours
+		@wruf.hours = 10
+		assert @wruf.too_few_seconds_since_last_rotation?(595*SecondsPerMinute - 1)
+	end
+	
+	def test_five_hundred_ninety_five_minutes_since_last_rotation_is_not_too_recent_if_rotation_after_ten_hours
+		@wruf.hours = 10
+		assert !@wruf.too_few_seconds_since_last_rotation?(595*SecondsPerMinute)
+	end
+
+	# ubuntu_release_compare
 	
 	def test_ubuntu_release_9_04_before_12_04
 		assert @wruf.ubuntu_release_compare('9.04', '12.04') < 0

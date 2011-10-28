@@ -31,6 +31,9 @@ class WRUF
 	attr_reader :tags
 	attr_writer :dir
 
+	SecondsPerHour = 3600
+	RotationMarginInSeconds = 300
+
 	LocalPhotoFileName = 'local_copy.jpg'
 	HistoryFileName = 'history.txt'
 	LogFileName = 'wruf.log'
@@ -89,6 +92,10 @@ class WRUF
 		return File.join(@dir, HistoryFileName)
 	end
 	
+	def too_few_seconds_since_last_rotation?(seconds_since_last_rotation)
+		return seconds_since_last_rotation < @hours * SecondsPerHour - RotationMarginInSeconds
+	end
+	
 	def too_recent_since_last_rotation?
 		@log.debug("Checking the history file at #{history_file_name} to find out when the wallpaper has been rotated the last time.")
 		if (!File.exist?(history_file_name))
@@ -96,7 +103,7 @@ class WRUF
 		end
 		seconds_since_last_rotation = Time.now - File.mtime(history_file_name)
 		@log.debug("Wallpaper has been rotated #{seconds_since_last_rotation} seconds ago.")
-		return (seconds_since_last_rotation < @hours*60*60)
+		return too_few_seconds_since_last_rotation?(seconds_since_last_rotation)
 	end
 	
 	def initialize_logging
