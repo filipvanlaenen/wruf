@@ -40,7 +40,7 @@ def display_tags(settings)
 	if (settings.tags.empty?)
 		tags_set = '<none>'
 	else
-		tags_set = settings.tags.join(', ')
+		tags_set = settings.tags.sort.join(', ')
 	end
 	puts "Current set of tags: #{tags_set}."
 end
