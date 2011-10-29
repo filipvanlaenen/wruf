@@ -21,11 +21,11 @@
 #
 
 require 'yaml'
-require 'wruf'
+require 'wruf_settings'
 
 local_wruf_dir = File.expand_path(ARGV[0])
-configuration_yaml = File.join(local_wruf_dir, 'wruf.yaml')
-wruf = WRUF.load(local_wruf_dir)
+settings_yaml = File.join(local_wruf_dir, 'wruf.yaml')
+settings = WrufSettings.load(settings_yaml)
 
 def display_help
 	puts 'Use the following commands to manage the tags:'
@@ -36,11 +36,11 @@ def display_help
 	puts
 end
 
-def display_tags(wruf)
-	if (wruf.tags.empty?)
+def display_tags(settings)
+	if (settings.tags.empty?)
 		tags_set = '<none>'
 	else
-		tags_set = wruf.tags.join(', ')
+		tags_set = settings.tags.join(', ')
 	end
 	puts "Current set of tags: #{tags_set}."
 end
@@ -51,7 +51,7 @@ def read_input
 end
 
 display_help
-display_tags(wruf)
+display_tags(settings)
 input = read_input
 
 while (!input.empty?)
@@ -60,16 +60,16 @@ while (!input.empty?)
 		display_help
 	elsif (/^add\s+\w+$/.match(input))
 		tag = /^add\s+(\w+)$/.match(input)[1]
-		if (wruf.tags.include?(tag))
+		if (settings.tags.include?(tag))
 			puts "#{tag} is already in the set of tags."
 		else
-			wruf.tags << tag
+			settings.tags << tag
 			puts "Added #{tag} to the set of tags."
 		end
 	elsif (/^delete\s+\w+$/.match(input))
 		tag = /^delete\s+(\w+)$/.match(input)[1]
-		if (wruf.tags.include?(tag))
-			wruf.tags.delete(tag)
+		if (settings.tags.include?(tag))
+			settings.tags.delete(tag)
 			puts "Removed #{tag} from the set of tags."
 		else
 			puts "#{tag} isn't in the set of tags."
@@ -78,12 +78,12 @@ while (!input.empty?)
 		puts "Could not parse the command '#{input}'."
 		display_help
 	end
-	display_tags(wruf)
+	display_tags(settings)
 	input = read_input
 end
 
-display_tags(wruf)
+display_tags(settings)
 
-open(configuration_yaml, "w") { |file|
-	file.write(wruf.to_yaml)
+open(settings_yaml, "w") { |file|
+	file.write(settings.to_yaml)
 }

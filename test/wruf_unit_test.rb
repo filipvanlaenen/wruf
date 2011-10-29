@@ -20,6 +20,7 @@
 #
 
 require 'wruf'
+require 'wruf_settings'
 require 'test/unit'
 
 class WrufUnitTest < Test::Unit::TestCase
@@ -38,27 +39,27 @@ class WrufUnitTest < Test::Unit::TestCase
 	# too_few_seconds_since_last_rotation?
 	
 	def test_zero_seconds_since_last_rotation_is_too_recent
-		@wruf.hours = 1
+		@wruf.settings.hours = 1
 		assert @wruf.too_few_seconds_since_last_rotation?(0)
 	end
 
 	def test_fifty_five_minutes_minus_one_second_since_last_rotation_is_too_recent_if_rotation_after_one_hour
-		@wruf.hours = 1
+		@wruf.settings.hours = 1
 		assert @wruf.too_few_seconds_since_last_rotation?(55*SecondsPerMinute - 1)
 	end
 	
 	def test_fifty_five_minutes_since_last_rotation_is_not_too_recent_if_rotation_after_one_hour
-		@wruf.hours = 1
+		@wruf.settings.hours = 1
 		assert !@wruf.too_few_seconds_since_last_rotation?(55*SecondsPerMinute)
 	end
 
 	def test_five_hundred_ninety_five_minutes_minus_one_second_since_last_rotation_is_too_recent_if_rotation_after_ten_hours
-		@wruf.hours = 10
+		@wruf.settings.hours = 10
 		assert @wruf.too_few_seconds_since_last_rotation?(595*SecondsPerMinute - 1)
 	end
 	
 	def test_five_hundred_ninety_five_minutes_since_last_rotation_is_not_too_recent_if_rotation_after_ten_hours
-		@wruf.hours = 10
+		@wruf.settings.hours = 10
 		assert !@wruf.too_few_seconds_since_last_rotation?(595*SecondsPerMinute)
 	end
 

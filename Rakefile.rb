@@ -105,7 +105,10 @@ task :heckle => "heckle:clean" do
 	                          .heckle
 	Heckle.new('WRUF').defined_in('wruf.rb') \
 	                          .tested_by('wruf_unit_test.rb') \
-	                          .skip('initialize_logging', 'run', 'set_pic_as_background', 'too_recent_since_last_rotation?') \
+	                          .skip('initialize_logging', 'load_settings', 'run', 'set_pic_as_background', 'too_recent_since_last_rotation?') \
+	                          .heckle
+	Heckle.new('WrufSettings').defined_in('wruf_settings.rb') \
+	                          .tested_by('wruf_settings_unit_test.rb') \
 	                          .heckle
 end
 

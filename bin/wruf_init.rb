@@ -21,37 +21,37 @@
 #
 
 require 'yaml'
-require 'wruf'
+require 'wruf_settings'
 
 local_wruf_dir = File.expand_path(ARGV[0])
-configuration_yaml = File.join(local_wruf_dir, 'wruf.yaml')
+settings_yaml = File.join(local_wruf_dir, 'wruf.yaml')
 
-if (File.exist?(configuration_yaml))
+if (File.exist?(settings_yaml))
 	value_status = 'current'
-	wruf = WRUF.load(local_wruf_dir)
+	settings = WrufSettings.load(settings_yaml)
 else
 	value_status = 'default'
-	wruf = WRUF.new
-	wruf.dimensions = [1280, 800]
-	wruf.tolerance = 0.2
-	wruf.hours = 24
+	settings = WrufSettings.new
+	settings.dimensions = [1280, 800]
+	settings.tolerance = 0.2
+	settings.hours = 24
 end
 
-print "Enter the minimal width for the wallpaper photo [#{value_status} #{wruf.dimensions[0]}]: "
+print "Enter the minimal width for the wallpaper photo [#{value_status} #{settings.dimensions[0]}]: "
 width = STDIN.readline.chomp.to_i
 if (width == 0)
-	width = wruf.dimensions[0]
+	width = settings.dimensions[0]
 end
 
-print "Enter the minimal height for the wallpaper photo [#{value_status} #{wruf.dimensions[1]}]: "
+print "Enter the minimal height for the wallpaper photo [#{value_status} #{settings.dimensions[1]}]: "
 height = STDIN.readline.chomp.to_i
 if (height == 0)
-	height = wruf.dimensions[1]
+	height = settings.dimensions[1]
 end
 
-wruf.dimensions = [width, height]
+settings.dimensions = [width, height]
 
-print "Enter the photo size tolerance [0-100, #{value_status} #{(wruf.tolerance * 100).to_i}]: "
+print "Enter the photo size tolerance [0-100, #{value_status} #{(settings.tolerance * 100).to_i}]: "
 tolerance = STDIN.readline.chomp.to_i
 if (tolerance < 1 || tolerance > 100)
 	tolerance = 0.2
@@ -60,14 +60,14 @@ else
 end
 puts "Registering a tolerance of #{(tolerance * 100).to_i}%."
 
-wruf.tolerance = tolerance
+settings.tolerance = tolerance
 
-print "Enter the minimal number of hours between wallpaper rotations [#{value_status} #{wruf.hours}]: "
+print "Enter the minimal number of hours between wallpaper rotations [#{value_status} #{settings.hours}]: "
 hours = STDIN.readline.chomp.to_i
 if (hours != 0)
-	wruf.hours = hours
+	settings.hours = hours
 end
 
-open(configuration_yaml, "w") { |file|
-	file.write(wruf.to_yaml)
+open(settings_yaml, "w") { |file|
+	file.write(settings.to_yaml)
 }

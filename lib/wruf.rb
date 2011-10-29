@@ -19,6 +19,7 @@ require 'log4r'
 require 'photo_decorator'
 require 'photo_history'
 require 'yaml'
+require 'wruf_settings'
 
 #
 # Main class for WRUF.
@@ -27,9 +28,8 @@ class WRUF
 
 	include Log4r
 
-	attr_accessor :dimensions, :hours, :tolerance
-	attr_reader :tags
-	attr_writer :dir
+	attr_accessor :dir
+	attr_reader :settings
 
 	SecondsPerHour = 3600
 	RotationMarginInSeconds = 300
@@ -40,28 +40,19 @@ class WRUF
 	YamlFileName = 'wruf.yaml'
 	
 	def initialize
-		@tags = []
-	end
+		@settings = WrufSettings.new
+	end	
 	
+	def load_settings(file_name)
+		@settings = WrufSettings.load(file_name)
+	end
+			
 	def self.load(dir)
-		expanded_dir = File.expand_path(dir)
-		file_name = File.join(expanded_dir, YamlFileName)
-		wruf = YAML::load(read_file(file_name))
-		wruf.dir = expanded_dir
+		wruf = WRUF.new
+		wruf.dir = File.expand_path(dir)
+		wruf.load_settings(File.join(wruf.dir, YamlFileName))
 		return wruf
 	end
-		
-	def self.read_file(file_name)
-		file = File.open(file_name, 'r')
-		content = ""
-		line = file.gets
-		while (line)
-			content += line
-			line = file.gets
-		end
-		file.close		
-		return content
-	end		
 
 	def get_ubuntu_release
 		return %x[lsb_release -rs]
@@ -93,7 +84,7 @@ class WRUF
 	end
 	
 	def too_few_seconds_since_last_rotation?(seconds_since_last_rotation)
-		return seconds_since_last_rotation < @hours * SecondsPerHour - RotationMarginInSeconds
+		return seconds_since_last_rotation < @settings.hours * SecondsPerHour - RotationMarginInSeconds
 	end
 	
 	def too_recent_since_last_rotation?
@@ -124,14 +115,14 @@ class WRUF
 			exit
 		end
 		history = PhotoHistory.load_history(history_file_name)
-		searcher = FlickrSearcher.new(@dimensions, @tolerance, @tags)
+		searcher = FlickrSearcher.new(@settings.dimensions, @settings.tolerance, @settings.tags)
 		photo_info = searcher.find_next_photo_info(history)
 		photo_url = searcher.get_photo_url(photo_info)
 		@log.info("Going to use the photo at #{photo_url} as the new wallpaper.")
 		photo_file_name = searcher.get_photo_file_name(photo_url)
 		photo_path = File.join(File.join(@dir, 'cache'), photo_file_name)
 		searcher.download_photo(photo_url, photo_path)
-		photo_decorator = PhotoDecorator.new(@dimensions)
+		photo_decorator = PhotoDecorator.new(@settings.dimensions)
 		decorated_photo_file_name = photo_decorator.decorate(photo_path, photo_info, photo_url)
 		set_pic_as_background(decorated_photo_file_name)
 		history.record(photo_url)
