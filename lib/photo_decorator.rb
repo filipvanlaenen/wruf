@@ -22,7 +22,7 @@ class PhotoDecorator
 
 	FontFamily = 'FranklinGothic'
 	Bold = 'bold'
-	TextFill = '#ffff00'
+	TextFill = '#FFCC11'
 	UrlTextFontSize = 12
 
 	def initialize(dims)

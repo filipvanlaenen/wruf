@@ -40,7 +40,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	PhotoUrl = 'http://bar.com/foo.jpg'
 	PhotoFileName = 'foo.jpg'
 	FontFamily = 'FranklinGothic'
-	TextFill = '#ffff00'
+	TextFill = '#FFCC11'
 	TitleTextIndex = 0
 	UrlTextIndex = 1
 	UrlTextFontSize = 12
