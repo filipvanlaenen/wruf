@@ -64,8 +64,17 @@ class PhotoDecorator
 		text.add_attribute('font-size', TitleFontSize)
 		text.add_attribute('font-weight', Bold)
 		text.add_attribute('x', @width / 10)
-		text.add_attribute('y', 9 * @height / 10 - TitleFontSize)
+		text.add_attribute('y', 9 * @height / 10 - TitleFontSize - TextFontSize)
 		text.text = photo_info.title
+		return text
+	end
+	
+	def create_author_source_text(photo_info)
+		text = create_text
+		text.add_attribute('x', @width / 10)
+		text.add_attribute('y', 9 * @height / 10 - TextFontSize)
+		text.add_attribute('font-size', TextFontSize)
+		text.text = "#{photo_info.author} @ #{photo_info.source}"
 		return text
 	end
 	
@@ -93,6 +102,7 @@ class PhotoDecorator
 		set_link_on_svg_image(image, photo_info)
 		svg << image
 		svg << create_title_text(photo_info)
+		svg << create_author_source_text(photo_info)
 		svg << create_url_text(photo_info)
 		doc << svg
 		return doc

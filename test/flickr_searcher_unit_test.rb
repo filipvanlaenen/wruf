@@ -122,4 +122,8 @@ EOF
 	def test_photo_info_conversion_keeps_height
 		assert_equal SampleFlickrPhoto1Height, @searcher.convert_photo_info(SampleFlickrPhoto1).height
 	end
+
+	def test_photo_info_conversion_sets_source_to_flickr
+		assert_equal 'Flickr', @searcher.convert_photo_info(SampleFlickrPhoto1).source
+	end
 end

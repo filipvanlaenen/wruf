@@ -22,7 +22,7 @@ require 'digest/sha1'
 #
 class PhotoInfo
 
-	attr_accessor :height, :title, :url, :width
+	attr_accessor :author, :height, :source, :title, :url, :width
 
 	def download_photo(target_dir)
 		uri = URI.parse(@url)

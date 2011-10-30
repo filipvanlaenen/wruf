@@ -26,7 +26,8 @@ require 'rexml/document'
 class FlickrSearcher
 
 	FlickRestServicesUri = 'http://api.flickr.com/services/rest/'
-	SearchMethod = 'flickr.photos.search'
+	PhotosSearchMethod = 'flickr.photos.search'
+	PeopleGetInfoMethod = 'flickr.people.getInfo'
 	ApiKey = '22d606ee88b821d73258bd42859af76a'
 
 	def initialize(dims, tolerance, tags)
@@ -35,13 +36,28 @@ class FlickrSearcher
 		@tolerance = tolerance
 		@tags = tags
 	end
-
-	def get_infoset(tags, i)
+	
+	def do_rest_request(form_data)
 		uri = URI.parse(FlickRestServicesUri)
 
 		http = Net::HTTP.new(uri.host, uri.port)
 		request = Net::HTTP::Get.new(uri.path)
-		form_data = {'method' => SearchMethod,
+		request.set_form_data(form_data)
+
+		request = Net::HTTP::Get.new(uri.path + '?' + request.body)
+
+		response = http.request(request)
+
+		case response
+		when Net::HTTPSuccess, Net::HTTPRedirection
+			return REXML::Document.new(response.body)
+		else
+			raise "An error occured while trying to access Flickr."
+		end		
+	end
+
+	def get_infoset(tags, i)
+		form_data = {'method' => PhotosSearchMethod,
 			           'api_key' => ApiKey,
 			           'extras' => 'o_dims,original_format',
 			           'format' => 'rest',
@@ -53,26 +69,15 @@ class FlickrSearcher
 		if (tags != nil)
 			form_data['tags'] = tags.join(',')
 		end
-		request.set_form_data(form_data)
-
-		request = Net::HTTP::Get.new(uri.path + '?' + request.body)
-
-		response = http.request(request)
-
-		case response
-		when Net::HTTPSuccess, Net::HTTPRedirection
-			return REXML::Document.new(response.body)
-		else
-			raise "An error occured while trying to search Flickr"
-		end		
+		return do_rest_request(form_data)
 	end
 	
 	def get_photo_info(info_set, history)
-		return info_set.get_elements("rsp/photos/photo") \
-					   .select{|e| e.attributes["o_width"].to_i >= @width} \
-					   .select{|e| e.attributes["o_height"].to_i >= @height} \
-					   .select{|e| (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) / (@height.to_f / @width.to_f) < 1.to_f + @tolerance} \
-					   .select{|e| (@height.to_f / @width.to_f) / (e.attributes["o_height"].to_f / e.attributes["o_width"].to_f) < 1.to_f + @tolerance} \
+		return info_set.get_elements('rsp/photos/photo') \
+					   .select{|e| e.attributes['o_width'].to_i >= @width} \
+					   .select{|e| e.attributes['o_height'].to_i >= @height} \
+					   .select{|e| (e.attributes['o_height'].to_f / e.attributes['o_width'].to_f) / (@height.to_f / @width.to_f) < 1.to_f + @tolerance} \
+					   .select{|e| (@height.to_f / @width.to_f) / (e.attributes['o_height'].to_f / e.attributes['o_width'].to_f) < 1.to_f + @tolerance} \
 					   .reject{|e| history.include?(get_photo_url(e))} \
 					   .first
 	end
@@ -85,11 +90,27 @@ class FlickrSearcher
 			info_set = get_infoset(@tags, i)
 			xml_photo_info = get_photo_info(info_set, history)
 		end
-		return convert_photo_info(xml_photo_info)
+		photo_info = convert_photo_info(xml_photo_info)
+		photo_info.author = get_author(xml_photo_info)
+		return photo_info
+	end
+
+	def get_person(user_id)
+		form_data = {'method' => PeopleGetInfoMethod,
+			           'api_key' => ApiKey,
+			           'user_id' => user_id}
+		return do_rest_request(form_data)
+	end
+	
+	def get_author(xml_photo_info)
+		owner_id = xml_photo_info.attributes['owner']
+		xml_person_info = get_person(owner_id)
+		return xml_person_info.get_elements('rsp/person/username').first.text
 	end
 	
 	def convert_photo_info(xml_photo_info)
 		photo_info = PhotoInfo.new
+		photo_info.source = 'Flickr'
 		photo_info.url = get_photo_url(xml_photo_info)
 		photo_info.title = xml_photo_info.attributes['title']
 		photo_info.width = xml_photo_info.attributes['o_width'].to_i
