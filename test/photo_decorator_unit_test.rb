@@ -40,7 +40,8 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	TextFill = '#FFCC11'
 	TitleTextIndex = 0
 	UrlTextIndex = 1
-	UrlTextFontSize = 12
+	TextFontSize = 12
+	TitleFontSize = 16
 	
 	def setup
 		settings = WrufSettings.new
@@ -165,7 +166,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 	
 	def test_svg_title_text_has_correct_y
-		assert_equal 9 * Height / 10 - UrlTextFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['y'].to_i
+		assert_equal 9 * Height / 10 - TitleFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['y'].to_i
 	end
 	
 	def test_svg_title_text_has_correct_font_family
@@ -177,7 +178,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 
 	def test_svg_title_text_has_correct_font_size
-		assert_equal 16, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-size'].to_i
+		assert_equal TitleFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-size'].to_i
 	end
 
 	def test_svg_title_text_has_correct_fill
@@ -201,7 +202,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 	
 	def test_svg_url_text_has_correct_font_size
-		assert_equal UrlTextFontSize, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-size'].to_i
+		assert_equal TextFontSize, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-size'].to_i
 	end
 
 	def test_svg_url_text_has_correct_fill

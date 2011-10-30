@@ -23,7 +23,8 @@ class PhotoDecorator
 	FontFamily = 'FranklinGothic'
 	Bold = 'bold'
 	TextFill = '#FFCC11'
-	UrlTextFontSize = 12
+	TextFontSize = 12
+	TitleFontSize = 16
 
 	def initialize(settings)
 		@width = settings.dimensions[0]
@@ -60,10 +61,10 @@ class PhotoDecorator
 	
 	def create_title_text(photo_info)
 		text = create_text
-		text.add_attribute('font-size', 16)
+		text.add_attribute('font-size', TitleFontSize)
 		text.add_attribute('font-weight', Bold)
 		text.add_attribute('x', @width / 10)
-		text.add_attribute('y', 9 * @height / 10 - UrlTextFontSize)
+		text.add_attribute('y', 9 * @height / 10 - TitleFontSize)
 		text.text = photo_info.title
 		return text
 	end
@@ -72,7 +73,7 @@ class PhotoDecorator
 		text = create_text
 		text.add_attribute('x', @width / 10)
 		text.add_attribute('y', 9 * @height / 10)
-		text.add_attribute('font-size', UrlTextFontSize)
+		text.add_attribute('font-size', TextFontSize)
 		text.text = photo_info.url
 		return text
 	end
