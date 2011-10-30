@@ -25,9 +25,9 @@ class PhotoDecorator
 	TextFill = '#FFCC11'
 	UrlTextFontSize = 12
 
-	def initialize(dims)
-		@width = dims[0]
-		@height = dims[1]	
+	def initialize(settings)
+		@width = settings.dimensions[0]
+		@height = settings.dimensions[1]	
 	end
 	
 	def set_dimensions_on_svg(svg)
@@ -36,19 +36,19 @@ class PhotoDecorator
 	end
 	
 	def set_dimensions_on_svg_image(image, photo_info)
-		scale_x = @width.to_f / photo_info.attributes['o_width'].to_f
-		scale_y = @height.to_f / photo_info.attributes['o_height'].to_f
+		scale_x = @width.to_f / photo_info.width.to_f
+		scale_y = @height.to_f / photo_info.height.to_f
 		scale = [scale_x, scale_y].max
-		x_offset = (scale * photo_info.attributes['o_width'].to_f - @width.to_f) / 2.to_f
-		y_offset = (scale * photo_info.attributes['o_height'].to_f - @height.to_f) / 2.to_f
+		x_offset = (scale * photo_info.width.to_f - @width.to_f) / 2.to_f
+		y_offset = (scale * photo_info.height.to_f - @height.to_f) / 2.to_f
 		image.add_attribute('x', -x_offset)
 		image.add_attribute('y', -y_offset)
 		image.add_attribute('width', @width + 2.to_f * x_offset)
 		image.add_attribute('height', @height + 2.to_f * y_offset) 
 	end
 	
-	def set_link_on_svg_image(image, photo_file_name)
-		image.add_attribute('xlink:href', photo_file_name)
+	def set_link_on_svg_image(image, photo_info)
+		image.add_attribute('xlink:href', photo_info.file_name)
 	end
 	
 	def create_text
@@ -64,20 +64,20 @@ class PhotoDecorator
 		text.add_attribute('font-weight', Bold)
 		text.add_attribute('x', @width / 10)
 		text.add_attribute('y', 9 * @height / 10 - UrlTextFontSize)
-		text.text = photo_info.attributes['title']
+		text.text = photo_info.title
 		return text
 	end
 	
-	def create_url_text(photo_url)
+	def create_url_text(photo_info)
 		text = create_text
 		text.add_attribute('x', @width / 10)
 		text.add_attribute('y', 9 * @height / 10)
 		text.add_attribute('font-size', UrlTextFontSize)
-		text.text = photo_url
+		text.text = photo_info.url
 		return text
 	end
 	
-	def create_svg(photo_file_name, photo_info, photo_url)
+	def create_svg(photo_info)
 		doc = REXML::Document.new
 		doc << REXML::XMLDecl.new('1.0', nil, 'no')
 		doctype = REXML::DocType.new(['svg', 'PUBLIC', '-//W3C//DTD SVG 1.1//EN', 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'])
@@ -89,10 +89,10 @@ class PhotoDecorator
 		set_dimensions_on_svg(svg)
 		image = REXML::Element.new('image')
 		set_dimensions_on_svg_image(image, photo_info)
-		set_link_on_svg_image(image, photo_file_name)
+		set_link_on_svg_image(image, photo_info)
 		svg << image
 		svg << create_title_text(photo_info)
-		svg << create_url_text(photo_url)
+		svg << create_url_text(photo_info)
 		doc << svg
 		return doc
 	end
@@ -123,9 +123,9 @@ class PhotoDecorator
 		return svg_file_name
 	end
 
-	def decorate(photo_file_name, photo_info, photo_url)
-		svg = create_svg(photo_file_name, photo_info, photo_url)
-		svg_file_name = save_svg_to_file(photo_file_name, svg)
+	def decorate(photo_info, dir)
+		svg = create_svg(photo_info)
+		svg_file_name = save_svg_to_file(File.join(dir, photo_info.file_name), svg)
 		png_file_name = convert_svg_to_jpg(svg_file_name)
 		return png_file_name
 	end

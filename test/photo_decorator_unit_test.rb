@@ -30,15 +30,12 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	PhotoTitle = 'Holding on'
 	Photo1Width = 2560
 	Photo1Height = 1600
-	Photo1Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo1Width}\" o_height=\"#{Photo1Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']
 	Photo2Width = 1480
 	Photo2Height = 800
-	Photo2Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo2Width}\" o_height=\"#{Photo2Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
 	Photo3Width = 1280
 	Photo3Height = 1000
-	Photo3Info = REXML::Document.new("<photo id=\"41942696\" owner=\"23548413@N00\" secret=\"ac7de727a7\" server=\"28\" farm=\"1\" title=\"#{PhotoTitle}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{Photo3Width}\" o_height=\"#{Photo3Height}\" originalsecret=\"ac7de727a7\" originalformat=\"jpg\" />").elements['photo']	
 	PhotoUrl = 'http://bar.com/foo.jpg'
-	PhotoFileName = 'foo.jpg'
+	PhotoFileName = 'e72ba8a7ffb298654e93742f9ac855dd7571d189.jpg'
 	FontFamily = 'FranklinGothic'
 	TextFill = '#FFCC11'
 	TitleTextIndex = 0
@@ -46,10 +43,27 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	UrlTextFontSize = 12
 	
 	def setup
-		@decorator = PhotoDecorator.new([Width, Height])
-		@svg1 = @decorator.create_svg(PhotoFileName, Photo1Info, PhotoUrl)
-		@svg2 = @decorator.create_svg(PhotoFileName, Photo2Info, PhotoUrl)
-		@svg3 = @decorator.create_svg(PhotoFileName, Photo3Info, PhotoUrl)
+		settings = WrufSettings.new
+		settings.dimensions = [Width, Height]
+		@decorator = PhotoDecorator.new(settings)
+		photo_info1 = PhotoInfo.new
+		photo_info1.width = Photo1Width
+		photo_info1.height = Photo1Height
+		photo_info1.title = PhotoTitle
+		photo_info1.url = PhotoUrl
+		photo_info2 = PhotoInfo.new
+		photo_info2.width = Photo2Width
+		photo_info2.height = Photo2Height
+		photo_info2.title = PhotoTitle
+		photo_info2.url = PhotoUrl
+		photo_info3 = PhotoInfo.new
+		photo_info3.width = Photo3Width
+		photo_info3.height = Photo3Height
+		photo_info3.title = PhotoTitle
+		photo_info3.url = PhotoUrl
+		@svg1 = @decorator.create_svg(photo_info1)
+		@svg2 = @decorator.create_svg(photo_info2)
+		@svg3 = @decorator.create_svg(photo_info3)
 	end
 	
 	def assert_get_png_file_name_from_svg_file_name_correct(svg_file_name, expected_png_file_name)

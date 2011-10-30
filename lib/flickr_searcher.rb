@@ -15,6 +15,7 @@
 # You can find a copy of the GNU General Public License in /doc/gpl.txt
 #
 
+require 'photo_info'
 require 'net/http'
 require 'uri'
 require 'rexml/document'
@@ -78,12 +79,21 @@ class FlickrSearcher
 	
 	def find_next_photo_info(history)
 		i = 0
-		photo_info = nil
-		while photo_info == nil
+		xml_photo_info = nil
+		while xml_photo_info == nil
 			i = i + 1
 			info_set = get_infoset(@tags, i)
-			photo_info = get_photo_info(info_set, history)
+			xml_photo_info = get_photo_info(info_set, history)
 		end
+		return convert_photo_info(xml_photo_info)
+	end
+	
+	def convert_photo_info(xml_photo_info)
+		photo_info = PhotoInfo.new
+		photo_info.url = get_photo_url(xml_photo_info)
+		photo_info.title = xml_photo_info.attributes['title']
+		photo_info.width = xml_photo_info.attributes['o_width'].to_i
+		photo_info.height = xml_photo_info.attributes['o_height'].to_i
 		return photo_info
 	end
 	
@@ -101,19 +111,5 @@ class FlickrSearcher
 		end
 		return "http://farm#{farm_id}.static.flickr.com/#{server_id}/#{id}_#{secret}_o.#{format}"
 	end
-	
-	def get_photo_file_name(url)
-		return /.*\/([^\/]*)$/.match(url)[1]
-	end
-	
-	def download_photo(photo_url, target)
-		uri = URI.parse(photo_url)
-		Net::HTTP.start(uri.host) { |http|
-			resp = http.get(uri.path) 
-			open(target, "wb") { |file|
-				file.write(resp.body)
-		   	}
-		}	
-	end
-
+		
 end

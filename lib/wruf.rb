@@ -114,18 +114,19 @@ class WRUF
 			@log.debug("Wallpaper has been rotated less than #{@hours} hours ago; won't rotate it again now.")
 			exit
 		end
-		history = PhotoHistory.load_history(history_file_name)
-		searcher = FlickrSearcher.new(@settings.dimensions, @settings.tolerance, @settings.tags)
-		photo_info = searcher.find_next_photo_info(history)
-		photo_url = searcher.get_photo_url(photo_info)
-		@log.info("Going to use the photo at #{photo_url} as the new wallpaper.")
-		photo_file_name = searcher.get_photo_file_name(photo_url)
-		photo_path = File.join(File.join(@dir, 'cache'), photo_file_name)
-		searcher.download_photo(photo_url, photo_path)
-		photo_decorator = PhotoDecorator.new(@settings.dimensions)
-		decorated_photo_file_name = photo_decorator.decorate(photo_path, photo_info, photo_url)
-		set_pic_as_background(decorated_photo_file_name)
-		history.record(photo_url)
+		begin
+			history = PhotoHistory.load_history(history_file_name)
+			searcher = FlickrSearcher.new(@settings.dimensions, @settings.tolerance, @settings.tags)
+			photo_info = searcher.find_next_photo_info(history)
+			photo_info.download_photo(File.join(@dir, 'cache'))
+			photo_decorator = PhotoDecorator.new(@settings)
+			decorated_photo_file_name = photo_decorator.decorate(photo_info, File.join(@dir, 'cache'))
+			set_pic_as_background(decorated_photo_file_name)
+			@log.info("Used the photo at #{photo_info.url} as the new wallpaper.")
+			history.record(photo_info.url)
+		rescue Exception => e
+			@log.fatal(e)
+		end
 	end
 
 end

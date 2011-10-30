@@ -47,9 +47,13 @@ class FlickrSearcherUnitTest < Test::Unit::TestCase
 EOF
 	SampleFlickrResponse = REXML::Document.new(SampleFlickrResponseString)
 	SampleFlickrPhoto1Id = '6072738710'
-	SampleFlickrPhoto1FileName = SampleFlickrPhoto1Id + '_59cff4fe40_o.jpg'
-	SampleFlickrPhoto1Url = 'http://farm7.static.flickr.com/6210/' + SampleFlickrPhoto1FileName
-	SampleFlickrPhoto1Info = '<photo id="6072738710" owner="38181284@N06" secret="522ec2a319" server="6210" farm="7" title="Dubrovnik Moonlight (Explored)" ispublic="1" isfriend="0" isfamily="0" o_width="3976" o_height="2720" originalsecret="59cff4fe40" originalformat="jpg" />'
+	SampleFlickrPhoto1OriginalSecret = '59cff4fe40'
+	SampleFlickrPhoto1Url = "http://farm7.static.flickr.com/6210/#{SampleFlickrPhoto1Id}_#{SampleFlickrPhoto1OriginalSecret}_o.jpg"
+	SampleFlickrPhoto1Width = 3976
+	SampleFlickrPhoto1Height = 2720
+	SampleFlickrPhoto1Title = 'Dubrovnik Moonlight (Explored)'
+	SampleFlickrPhoto1Info = "<photo id=\"#{SampleFlickrPhoto1Id}\" owner=\"38181284@N06\" secret=\"522ec2a319\" server=\"6210\" farm=\"7\" title=\"#{SampleFlickrPhoto1Title}\" ispublic=\"1\" isfriend=\"0\" isfamily=\"0\" o_width=\"#{SampleFlickrPhoto1Width}\" o_height=\"#{SampleFlickrPhoto1Height}\" originalsecret=\"#{SampleFlickrPhoto1OriginalSecret}\" originalformat=\"jpg\" />"
+	SampleFlickrPhoto1 = REXML::Document.new(SampleFlickrPhoto1Info).elements["photo"]
 	SampleFlickrPhoto2Id = '6045494525'
 	SampleFlickrPhoto2Url = 'http://farm7.static.flickr.com/6197/6045494525_7058d4bfdc_o.jpg'
 	SampleFlickrPhoto3Info = '<photo id="91957795" owner="86685058@N00" secret="5a27611762" server="42" farm="1" title="Lady Lula\'s Bright Eyed Stare" ispublic="1" isfriend="0" isfamily="0" />'
@@ -83,8 +87,7 @@ EOF
 	end
 
 	def test_compose_url_from_photo_info
-		photo_info = REXML::Document.new(SampleFlickrPhoto1Info).elements["photo"]
-		assert_equal SampleFlickrPhoto1Url, @searcher.get_photo_url(photo_info)
+		assert_equal SampleFlickrPhoto1Url, @searcher.get_photo_url(SampleFlickrPhoto1)
 	end
 
 	def test_compose_url_from_photo_info_lacking_original_info
@@ -101,12 +104,22 @@ EOF
 		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentOriginalSecretInfo).elements["photo"]
 		assert_equal SampleFlickrPhotoWithDifferentOriginalSecretUrl, @searcher.get_photo_url(photo_info)
 	end
-	
-	def test_get_photo_file_name
-		assert_equal SampleFlickrPhoto1FileName, @searcher.get_photo_file_name(SampleFlickrPhoto1Url)
+			
+	# convert_photo_info(photo_info)
+		
+	def test_photo_info_conversion_keeps_url
+		assert_equal SampleFlickrPhoto1Url, @searcher.convert_photo_info(SampleFlickrPhoto1).url
 	end
-	
-	def test_get_photo_file_name_with_different_format
-		assert_equal SampleFlickrPhotoWithDifferentFormatFileName, @searcher.get_photo_file_name(SampleFlickrPhotoWithDifferentFormatUrl)
+
+	def test_photo_info_conversion_keeps_title
+		assert_equal SampleFlickrPhoto1Title, @searcher.convert_photo_info(SampleFlickrPhoto1).title
+	end
+
+	def test_photo_info_conversion_keeps_width
+		assert_equal SampleFlickrPhoto1Width, @searcher.convert_photo_info(SampleFlickrPhoto1).width
+	end
+
+	def test_photo_info_conversion_keeps_height
+		assert_equal SampleFlickrPhoto1Height, @searcher.convert_photo_info(SampleFlickrPhoto1).height
 	end
 end

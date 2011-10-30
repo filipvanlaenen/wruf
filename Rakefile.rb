@@ -103,6 +103,9 @@ task :heckle => "heckle:clean" do
 	                          .tested_by('photo_history_unit_test.rb') \
 	                          .skip('record') \
 	                          .heckle
+	Heckle.new('PhotoInfo').defined_in('photo_info.rb') \
+	                          .tested_by('photo_info_unit_test.rb') \
+	                          .heckle
 	Heckle.new('WRUF').defined_in('wruf.rb') \
 	                          .tested_by('wruf_unit_test.rb') \
 	                          .skip('initialize_logging', 'load_settings', 'run', 'set_pic_as_background', 'too_recent_since_last_rotation?') \
