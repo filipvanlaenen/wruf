@@ -93,7 +93,7 @@ desc "Mutation testing with Heckle"
 task :heckle => "heckle:clean" do
 	Heckle.new('FlickrSearcher').defined_in('flickr_searcher.rb') \
 								.tested_by('flickr_searcher_unit_test.rb') \
-								.skip('download_photo', 'find_next_photo_info', 'get_infoset') \
+								.skip('find_next_photo_info', 'get_infoset') \
 								.heckle
 	Heckle.new('PhotoDecorator').defined_in('photo_decorator.rb') \
 								.tested_by('photo_decorator_unit_test.rb') \
@@ -105,6 +105,7 @@ task :heckle => "heckle:clean" do
 	                          .heckle
 	Heckle.new('PhotoInfo').defined_in('photo_info.rb') \
 	                          .tested_by('photo_info_unit_test.rb') \
+	                          .skip('download_photo') \
 	                          .heckle
 	Heckle.new('WRUF').defined_in('wruf.rb') \
 	                          .tested_by('wruf_unit_test.rb') \

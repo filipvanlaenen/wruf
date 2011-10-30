@@ -126,6 +126,7 @@ class WRUF
 			history.record(photo_info.url)
 		rescue Exception => e
 			@log.fatal(e)
+			exit
 		end
 	end
 
