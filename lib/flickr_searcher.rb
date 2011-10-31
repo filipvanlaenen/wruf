@@ -28,6 +28,7 @@ class FlickrSearcher
 	FlickRestServicesUri = 'http://api.flickr.com/services/rest/'
 	PhotosSearchMethod = 'flickr.photos.search'
 	PeopleGetInfoMethod = 'flickr.people.getInfo'
+	PhotosGetInfoMethod = 'flickr.photos.getInfo'
 	ApiKey = '22d606ee88b821d73258bd42859af76a'
 
 	def initialize(dims, tolerance, tags)
@@ -96,15 +97,13 @@ class FlickrSearcher
 		end
 		photo_info = convert_photo_info(xml_photo_info)
 		photo_info.author = get_author(xml_photo_info)
+		photo_info.ref_url = get_ref_url(xml_photo_info)
 		return photo_info
 	end
 	
 	def create_form_data_to_get_info_about_user(user_id)
-		return {'method' => PeopleGetInfoMethod,
-			           'api_key' => ApiKey,
-			           'user_id' => user_id}
+		return {'method' => PeopleGetInfoMethod, 'api_key' => ApiKey, 'user_id' => user_id}
 	end
-	
 
 	def get_person(user_id)
 		return do_rest_request(create_form_data_to_get_info_about_user(user_id))
@@ -124,6 +123,30 @@ class FlickrSearcher
 		return get_author_from_xml_person_info(xml_person_info)
 	end
 	
+	def get_photo_id_from_xml_photo_info(xml_photo_info)
+		return xml_photo_info.attributes['id']
+	end
+	
+	def create_form_data_to_get_info_about_photo(photo_id)
+		return {'method' => PhotosGetInfoMethod, 'api_key' => ApiKey, 'photo_id' => photo_id}
+	end
+
+	def get_photo(photo_id)
+		return do_rest_request(create_form_data_to_get_info_about_photo(photo_id))
+	end
+	
+	def get_ref_url_from_xml_photo_info(xml_photo_info)
+		return xml_photo_info.get_elements('rsp/photo/urls/url') \
+							 .select{|e| e.attributes['type'] == 'photopage'} \
+							 .first.text
+	end
+	
+	def get_ref_url(xml_photo_info)
+		photo_id = get_photo_id_from_xml_photo_info(xml_photo_info)
+		xml_photo_info = get_photo(photo_id)
+		return get_ref_url_from_xml_photo_info(xml_photo_info)
+	end
+	
 	def convert_photo_info(xml_photo_info)
 		photo_info = PhotoInfo.new
 		photo_info.source = 'Flickr'
@@ -134,15 +157,15 @@ class FlickrSearcher
 		return photo_info
 	end
 	
-	def get_photo_url(photo_info)
-		id = photo_info.attributes['id']
-		farm_id = photo_info.attributes['farm']
-		server_id = photo_info.attributes['server']
-		secret = photo_info.attributes['originalsecret']
+	def get_photo_url(xml_photo_info)
+		id = get_photo_id_from_xml_photo_info(xml_photo_info)
+		farm_id = xml_photo_info.attributes['farm']
+		server_id = xml_photo_info.attributes['server']
+		secret = xml_photo_info.attributes['originalsecret']
 		if (secret == nil)
-			secret = photo_info.attributes['secret']
+			secret = xml_photo_info.attributes['secret']
 		end
-		format = photo_info.attributes['originalformat']
+		format = xml_photo_info.attributes['originalformat']
 		if (format == nil)
 			format = 'jpg'
 		end

@@ -83,7 +83,7 @@ class PhotoDecorator
 		text.add_attribute('x', @width / 10)
 		text.add_attribute('y', 9 * @height / 10)
 		text.add_attribute('font-size', TextFontSize)
-		text.text = photo_info.url
+		text.text = photo_info.ref_url
 		return text
 	end
 	

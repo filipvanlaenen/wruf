@@ -37,6 +37,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	PhotoSource = 'Flickr'
 	PhotoAuthor = 'John Doe'
 	PhotoUrl = 'http://bar.com/foo.jpg'
+	PhotoRefUrl = 'http://bar.com/foo'
 	PhotoFileName = 'e72ba8a7ffb298654e93742f9ac855dd7571d189.jpg'
 	PhotoAuthorSource = "#{PhotoAuthor} @ #{PhotoSource}"
 	FontFamily = 'FranklinGothic'
@@ -58,16 +59,19 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		photo_info1.author = PhotoAuthor
 		photo_info1.title = PhotoTitle
 		photo_info1.url = PhotoUrl
+		photo_info1.ref_url = PhotoRefUrl
 		photo_info2 = PhotoInfo.new
 		photo_info2.width = Photo2Width
 		photo_info2.height = Photo2Height
 		photo_info2.title = PhotoTitle
 		photo_info2.url = PhotoUrl
+		photo_info2.ref_url = PhotoRefUrl
 		photo_info3 = PhotoInfo.new
 		photo_info3.width = Photo3Width
 		photo_info3.height = Photo3Height
 		photo_info3.title = PhotoTitle
 		photo_info3.url = PhotoUrl
+		photo_info3.ref_url = PhotoRefUrl
 		@svg1 = @decorator.create_svg(photo_info1)
 		@svg2 = @decorator.create_svg(photo_info2)
 		@svg3 = @decorator.create_svg(photo_info3)
@@ -256,6 +260,6 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 
 	def test_svg_url_text_has_correct_content
-		assert_equal PhotoUrl, @svg1.get_elements('svg/text')[UrlTextIndex].text
+		assert_equal PhotoRefUrl, @svg1.get_elements('svg/text')[UrlTextIndex].text
 	end
 end

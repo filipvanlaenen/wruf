@@ -64,7 +64,35 @@ EOF
 	</person>	
 </rsp>
 EOF
-	SampleFlickrPersonInfoResponse = REXML::Document.new(SampleFlickrPersonInfoResponseString)	
+	SampleFlickrPersonInfoResponse = REXML::Document.new(SampleFlickrPersonInfoResponseString)
+	SampleFlickrPhotoInfoResponseString = <<EOF
+<?xml version="1.0" encoding="utf-8" ?>
+<rsp stat="ok">
+	<photo id="2733" secret="123456" server="12" isfavorite="0" license="3" rotation="90" originalsecret="1bc09ce34a" originalformat="png">
+		<owner nsid="12037949754@N01" username="Bees" realname="Cal Henderson" location="Bedford, UK" />
+		<title>orford_castle_taster</title>
+		<description>hello!</description>
+		<visibility ispublic="1" isfriend="0" isfamily="0" />
+		<dates posted="1100897479" taken="2004-11-19 12:51:19" takengranularity="0" lastupdate="1093022469" />
+		<permissions permcomment="3" permaddmeta="2" />
+		<editability cancomment="1" canaddmeta="1" />
+		<comments>1</comments>
+		<notes>
+			<note id="313" author="12037949754@N01" authorname="Bees" x="10" y="10" w="50" h="50">foo</note>
+		</notes>
+		<tags>
+			<tag id="1234" author="12037949754@N01" raw="woo yay">wooyay</tag>
+			<tag id="1235" author="12037949754@N01" raw="hoopla">hoopla</tag>
+		</tags>
+		<urls>
+			<url type="foo">http://www.foo.com/</url>
+			<url type="photopage">http://www.flickr.com/photos/bees/2733/</url>
+		</urls>
+	</photo>	
+</rsp>
+EOF
+	SampleFlickrPhotoInfoResponse = REXML::Document.new(SampleFlickrPhotoInfoResponseString)
+	SampleFlickrPhotoRefUrl = 'http://www.flickr.com/photos/bees/2733/'
 	SampleFlickrPhoto1Id = '6072738710'
 	SampleFlickrPhoto1OriginalSecret = '59cff4fe40'
 	SampleFlickrPhoto1Url = "http://farm7.static.flickr.com/6210/#{SampleFlickrPhoto1Id}_#{SampleFlickrPhoto1OriginalSecret}_o.jpg"
@@ -89,42 +117,6 @@ EOF
 		@searcher = FlickrSearcher.new([1280, 800], 0.2, ['foo', 'bar'])
 	end
 	
-	def test_should_get_first_photo_info_when_no_history
-		history = PhotoHistory.new(HistoryFileName, [])
-		photo_info = @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
-		assert_equal SampleFlickrPhoto1Id, photo_info.attributes['id']
-	end
-	
-	def test_should_get_second_photo_info_if_first_in_history
-		history = PhotoHistory.new(HistoryFileName, [SampleFlickrPhoto1Url])
-		photo_info = @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
-		assert_equal SampleFlickrPhoto2Id, photo_info.attributes['id']
-	end
-
-	def test_return_nil_if_all_photos_in_history
-		history = PhotoHistory.new(HistoryFileName, [SampleFlickrPhoto1Url, SampleFlickrPhoto2Url])
-		assert_nil @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
-	end
-
-	def test_compose_url_from_photo_info
-		assert_equal SampleFlickrPhoto1Url, @searcher.get_photo_url(SampleFlickrPhoto1)
-	end
-
-	def test_compose_url_from_photo_info_lacking_original_info
-		photo_info = REXML::Document.new(SampleFlickrPhoto3Info).elements["photo"]
-		assert_equal SampleFlickrPhoto3Url, @searcher.get_photo_url(photo_info)
-	end
-	
-	def test_compose_url_from_photo_info_with_different_format
-		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentFormatInfo).elements["photo"]
-		assert_equal SampleFlickrPhotoWithDifferentFormatUrl, @searcher.get_photo_url(photo_info)
-	end
-	
-	def test_compose_url_from_photo_info_with_different_original_secret
-		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentOriginalSecretInfo).elements["photo"]
-		assert_equal SampleFlickrPhotoWithDifferentOriginalSecretUrl, @searcher.get_photo_url(photo_info)
-	end
-			
 	# convert_photo_info
 		
 	def test_photo_info_conversion_keeps_url
@@ -165,6 +157,12 @@ EOF
 		assert_equal 'foo,bar', @searcher.create_form_data_to_search_photos(['foo', 'bar'], 1)['tags']
 	end
 	
+	# create_form_data_to_get_info_about_photo
+	
+	def test_must_set_photo_id_in_form_data_to_get_info_about_photo
+		assert_equal '123', @searcher.create_form_data_to_get_info_about_photo('123')['photo_id']
+	end
+
 	# create_form_data_to_get_info_about_user
 	
 	def test_must_set_owner_id_in_form_data_to_get_info_about_user
@@ -182,5 +180,57 @@ EOF
 	def test_must_extract_owner_id_from_xml_photo_info
 		assert_equal SampleFlickrPhoto1Owner, @searcher.get_owner_id_from_xml_photo_info(SampleFlickrPhoto1)
 	end
+	
+	# get_photo_id_from_xml_photo_info
+	
+	def test_must_extract_photo_id_from_xml_photo_info
+		assert_equal SampleFlickrPhoto1Id, @searcher.get_photo_id_from_xml_photo_info(SampleFlickrPhoto1)
+	end
+
+	# get_photo_info
+	
+	def test_should_get_first_photo_info_when_no_history
+		history = PhotoHistory.new(HistoryFileName, [])
+		photo_info = @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
+		assert_equal SampleFlickrPhoto1Id, photo_info.attributes['id']
+	end
+	
+	def test_should_get_second_photo_info_if_first_in_history
+		history = PhotoHistory.new(HistoryFileName, [SampleFlickrPhoto1Url])
+		photo_info = @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
+		assert_equal SampleFlickrPhoto2Id, photo_info.attributes['id']
+	end
+
+	def test_return_nil_if_all_photos_in_history
+		history = PhotoHistory.new(HistoryFileName, [SampleFlickrPhoto1Url, SampleFlickrPhoto2Url])
+		assert_nil @searcher.get_photo_info(SampleFlickrPhotosResponse, history)
+	end
+
+	# get_photo_url
+	
+	def test_compose_url_from_photo_info
+		assert_equal SampleFlickrPhoto1Url, @searcher.get_photo_url(SampleFlickrPhoto1)
+	end
+
+	def test_compose_url_from_photo_info_lacking_original_info
+		photo_info = REXML::Document.new(SampleFlickrPhoto3Info).elements["photo"]
+		assert_equal SampleFlickrPhoto3Url, @searcher.get_photo_url(photo_info)
+	end
+	
+	def test_compose_url_from_photo_info_with_different_format
+		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentFormatInfo).elements["photo"]
+		assert_equal SampleFlickrPhotoWithDifferentFormatUrl, @searcher.get_photo_url(photo_info)
+	end
+	
+	def test_compose_url_from_photo_info_with_different_original_secret
+		photo_info = REXML::Document.new(SampleFlickrPhotoWithDifferentOriginalSecretInfo).elements["photo"]
+		assert_equal SampleFlickrPhotoWithDifferentOriginalSecretUrl, @searcher.get_photo_url(photo_info)
+	end	
+	
+	# get_ref_url_from_xml_photo_info
+	
+	def test_must_extract_ref_url_from_xml_photo_info
+		assert_equal SampleFlickrPhotoRefUrl, @searcher.get_ref_url_from_xml_photo_info(SampleFlickrPhotoInfoResponse)		
+	end	
 		
 end
