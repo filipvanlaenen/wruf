@@ -55,8 +55,8 @@ class FlickrSearcher
 			raise "An error occured while trying to access Flickr."
 		end		
 	end
-
-	def get_infoset(tags, i)
+	
+	def create_form_data_to_search_photos(tags, i)
 		form_data = {'method' => PhotosSearchMethod,
 			           'api_key' => ApiKey,
 			           'extras' => 'o_dims,original_format',
@@ -69,7 +69,11 @@ class FlickrSearcher
 		if (tags != nil)
 			form_data['tags'] = tags.join(',')
 		end
-		return do_rest_request(form_data)
+		return form_data
+	end
+
+	def get_infoset(tags, i)
+		return do_rest_request(create_form_data_to_search_photos(tags, i))
 	end
 	
 	def get_photo_info(info_set, history)
@@ -94,18 +98,30 @@ class FlickrSearcher
 		photo_info.author = get_author(xml_photo_info)
 		return photo_info
 	end
-
-	def get_person(user_id)
-		form_data = {'method' => PeopleGetInfoMethod,
+	
+	def create_form_data_to_get_info_about_user(user_id)
+		return {'method' => PeopleGetInfoMethod,
 			           'api_key' => ApiKey,
 			           'user_id' => user_id}
-		return do_rest_request(form_data)
+	end
+	
+
+	def get_person(user_id)
+		return do_rest_request(create_form_data_to_get_info_about_user(user_id))
+	end
+	
+	def get_owner_id_from_xml_photo_info(xml_photo_info)
+		return xml_photo_info.attributes['owner']
+	end
+	
+	def get_author_from_xml_person_info(xml_person_info)
+		return xml_person_info.get_elements('rsp/person/username').first.text
 	end
 	
 	def get_author(xml_photo_info)
-		owner_id = xml_photo_info.attributes['owner']
+		owner_id = get_owner_id_from_xml_photo_info(xml_photo_info)
 		xml_person_info = get_person(owner_id)
-		return xml_person_info.get_elements('rsp/person/username').first.text
+		return get_author_from_xml_person_info(xml_person_info)
 	end
 	
 	def convert_photo_info(xml_photo_info)
