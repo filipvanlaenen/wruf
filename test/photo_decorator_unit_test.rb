@@ -175,91 +175,107 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		assert_equal PhotoFileName, @svg1.get_elements('svg/image').first.attributes['xlink:href']
 	end
 
-	# <svg/text>
-	
-	def test_svg_contains_two_texts
-		assert_equal 3, @svg1.get_elements('svg/text').size
+	# <svg/g[photo_info]/text>
+
+	def get_photo_info_group
+		return @svg1.get_elements('svg/g').select { |e| e.attributes['id'] == 'photo_info' }.first
 	end
 
-	# <svg/text[Title]>
+	def test_photo_info_group_has_three_text_elements
+		assert_equal 3, get_photo_info_group.get_elements('text').size
+	end
+
+	# <svg/g[photo_info]/text[Title]>
+	
+	def get_title_text
+		return get_photo_info_group.get_elements('text')[TitleTextIndex]
+	end
 
 	def test_svg_title_text_has_correct_x
-		assert_equal Width / 10, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['x'].to_i
+		assert_equal Width / 10, get_title_text.attributes['x'].to_i
 	end
 	
 	def test_svg_title_text_has_correct_y
-		assert_equal 9 * Height / 10 - TitleFontSize - TextFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['y'].to_i
+		assert_equal 9 * Height / 10 - TitleFontSize - TextFontSize, get_title_text.attributes['y'].to_i
 	end
 	
 	def test_svg_title_text_has_correct_font_family
-		assert_equal FontFamily, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-family']
+		assert_equal FontFamily, get_title_text.attributes['font-family']
 	end
 	
 	def test_svg_title_text_has_correct_font_weight
-		assert_equal 'bold', @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-weight']
+		assert_equal 'bold', get_title_text.attributes['font-weight']
 	end
 
 	def test_svg_title_text_has_correct_font_size
-		assert_equal TitleFontSize, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['font-size'].to_i
+		assert_equal TitleFontSize, get_title_text.attributes['font-size'].to_i
 	end
 
 	def test_svg_title_text_has_correct_fill
-		assert_equal TextFill, @svg1.get_elements('svg/text')[TitleTextIndex].attributes['fill']
+		assert_equal TextFill, get_title_text.attributes['fill']
 	end
 
 	def test_svg_title_text_has_correct_content
-		assert_equal PhotoTitle, @svg1.get_elements('svg/text')[TitleTextIndex].text
+		assert_equal PhotoTitle, get_title_text.text
 	end
 
-	# <svg/text[Author and Source]>
+	# <svg/g[photo_info]/text[Author and Source]>
+
+	def get_author_source_text
+		return get_photo_info_group.get_elements('text')[AuthorSourceTextIndex]
+	end	
 	
 	def test_svg_author_source_text_has_correct_x
-		assert_equal Width / 10, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].attributes['x'].to_i
+		assert_equal Width / 10, get_author_source_text.attributes['x'].to_i
 	end
 	
 	def test_svg_author_source_text_has_correct_y
-		assert_equal 9 * Height / 10  - TextFontSize, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].attributes['y'].to_i
+		assert_equal 9 * Height / 10  - TextFontSize, get_author_source_text.attributes['y'].to_i
 	end
 	
 	def test_svg_author_source_text_has_correct_font_family
-		assert_equal FontFamily, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].attributes['font-family']
+		assert_equal FontFamily, get_author_source_text.attributes['font-family']
 	end
 	
 	def test_svg_author_source_text_has_correct_font_size
-		assert_equal TextFontSize, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].attributes['font-size'].to_i
+		assert_equal TextFontSize, get_author_source_text.attributes['font-size'].to_i
 	end
 
 	def test_svg_author_source_text_has_correct_fill
-		assert_equal TextFill, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].attributes['fill']
+		assert_equal TextFill, get_author_source_text.attributes['fill']
 	end
 
 	def test_svg_author_source_text_has_correct_content
-		assert_equal PhotoAuthorSource, @svg1.get_elements('svg/text')[AuthorSourceTextIndex].text
+		assert_equal PhotoAuthorSource, get_author_source_text.text
 	end
 
-	# <svg/text[URL]>
+	# <svg/g[photo_info]/text[URL]>
 	
+	def get_ref_url_text
+		return get_photo_info_group.get_elements('text')[UrlTextIndex]
+	end	
+
 	def test_svg_url_text_has_correct_x
-		assert_equal Width / 10, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['x'].to_i
+		assert_equal Width / 10, get_ref_url_text.attributes['x'].to_i
 	end
 	
 	def test_svg_url_text_has_correct_y
-		assert_equal 9 * Height / 10, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['y'].to_i
+		assert_equal 9 * Height / 10, get_ref_url_text.attributes['y'].to_i
 	end
 	
 	def test_svg_url_text_has_correct_font_family
-		assert_equal FontFamily, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-family']
+		assert_equal FontFamily, get_ref_url_text.attributes['font-family']
 	end
 	
 	def test_svg_url_text_has_correct_font_size
-		assert_equal TextFontSize, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['font-size'].to_i
+		assert_equal TextFontSize, get_ref_url_text.attributes['font-size'].to_i
 	end
 
 	def test_svg_url_text_has_correct_fill
-		assert_equal TextFill, @svg1.get_elements('svg/text')[UrlTextIndex].attributes['fill']
+		assert_equal TextFill, get_ref_url_text.attributes['fill']
 	end
 
 	def test_svg_url_text_has_correct_content
-		assert_equal PhotoRefUrl, @svg1.get_elements('svg/text')[UrlTextIndex].text
+		assert_equal PhotoRefUrl, get_ref_url_text.text
 	end
 end

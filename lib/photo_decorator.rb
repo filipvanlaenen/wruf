@@ -86,6 +86,15 @@ class PhotoDecorator
 		text.text = photo_info.ref_url
 		return text
 	end
+
+	def create_photo_info_group(photo_info)
+		group = REXML::Element.new('g')
+		group.add_attribute('id', 'photo_info')
+		group << create_title_text(photo_info)
+		group << create_author_source_text(photo_info)
+		group << create_url_text(photo_info)
+		return group
+	end
 	
 	def create_svg(photo_info)
 		doc = REXML::Document.new
@@ -101,9 +110,7 @@ class PhotoDecorator
 		set_dimensions_on_svg_image(image, photo_info)
 		set_link_on_svg_image(image, photo_info)
 		svg << image
-		svg << create_title_text(photo_info)
-		svg << create_author_source_text(photo_info)
-		svg << create_url_text(photo_info)
+		svg << create_photo_info_group(photo_info)
 		doc << svg
 		return doc
 	end
