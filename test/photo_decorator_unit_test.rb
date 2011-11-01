@@ -117,28 +117,32 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		assert_equal Height, @svg1.get_elements('svg').first.attributes['height'].to_i
 	end
 
+	# <svg/image>
+
 	def test_svg_contains_image
 		assert !@svg1.get_elements('svg/image').empty?
 	end
-
-	# <svg/image>
+	
+	def get_image
+		return @svg1.get_elements('svg/image').first
+	end
 
 	def test_svg1_image_has_correct_x
-		assert_equal 0, @svg1.get_elements('svg/image').first.attributes['x'].to_i
+		assert_equal 0, get_image.attributes['x'].to_i
 	end
 		
 	def test_svg1_image_has_correct_y
-		assert_equal 0, @svg1.get_elements('svg/image').first.attributes['y'].to_i
+		assert_equal 0, get_image.attributes['y'].to_i
 	end
 
 	def test_svg1_image_has_correct_width
-		assert_equal Width, @svg1.get_elements('svg/image').first.attributes['width'].to_i
+		assert_equal Width, get_image.attributes['width'].to_i
 	end
 		
 	def test_svg1_image_has_correct_height
-		assert_equal Height, @svg1.get_elements('svg/image').first.attributes['height'].to_i
+		assert_equal Height, get_image.attributes['height'].to_i
 	end
-
+	
 	def test_svg2_image_has_correct_x
 		assert_equal -100, @svg2.get_elements('svg/image').first.attributes['x'].to_i
 	end
@@ -170,16 +174,20 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	def test_svg3_image_has_correct_height
 		assert_equal Height + 200, @svg3.get_elements('svg/image').first.attributes['height'].to_i
 	end
-	
-	def test_svg1_image_has_correct_xlink_href
-		assert_equal PhotoFileName, @svg1.get_elements('svg/image').first.attributes['xlink:href']
-	end
 
+	def test_svg_image_has_correct_xlink_href
+		assert_equal PhotoFileName, get_image.attributes['xlink:href']
+	end
+	
 	# <svg/g[photo_info]/text>
+
+	def test_has_photo_info_group
+		assert !@svg1.get_elements('svg/g').select { |e| e.attributes['id'] == 'photo_info' }.empty?
+	end
 
 	def get_photo_info_group
 		return @svg1.get_elements('svg/g').select { |e| e.attributes['id'] == 'photo_info' }.first
-	end
+	end	
 
 	def test_photo_info_group_has_three_text_elements
 		assert_equal 3, get_photo_info_group.get_elements('text').size
@@ -277,5 +285,148 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 
 	def test_svg_url_text_has_correct_content
 		assert_equal PhotoRefUrl, get_ref_url_text.text
+	end
+	
+	# <svg/g[calendar]>
+
+	def test_has_calendar_group
+		assert !@svg1.get_elements('svg/g').select { |e| e.attributes['id'] == 'calendar' }.empty?
+	end
+
+	def get_calendar_group
+		return @svg1.get_elements('svg/g').select { |e| e.attributes['id'] == 'calendar' }.first
+	end
+	
+	def test_calendar_is_transformed_correctly
+		width = 9 * Width / 10
+		height = Height / 10
+		assert_equal "translate(#{width},#{height})", get_calendar_group.attributes['transform']
+	end
+	
+	def test_calendar_has_correct_font_family
+		assert_equal PhotoDecorator::CalendarFontFamily, get_calendar_group.attributes['font-family']
+	end
+
+	def test_calendar_has_correct_font_size
+		assert_equal PhotoDecorator::CalendarFontSize, get_calendar_group.attributes['font-size'].to_i
+	end
+
+	def test_calendar_group_has_three_groups
+		assert_equal 3, get_calendar_group.get_elements('g').size
+	end
+	
+	# <svg/g[calendar]/g[last_week]>
+	
+	def get_last_week_group
+		return get_calendar_group.get_elements('g').select { |e| e.attributes['id'] == 'last_week' }.first
+	end
+
+	def test_last_week_has_seven_text_elements
+		assert_equal 7, get_last_week_group.get_elements('text').size
+	end	
+
+	def test_last_week_has_correct_x
+		for i in 0..6
+			assert_equal ((PhotoDecorator::CalendarFontSize * (i - 6)).to_f * 1.4).to_i, get_last_week_group.get_elements('text')[i].attributes['x'].to_i
+		end
+	end
+
+	def test_last_week_has_correct_y
+		for i in 0..6
+			assert_equal 0, get_last_week_group.get_elements('text')[i].attributes['y'].to_i
+		end
+	end
+
+	def test_last_week_has_correct_fill_for_weekdays
+		for i in 0..5
+			assert_equal PhotoDecorator::CalendarWeekdayFill, get_last_week_group.get_elements('text')[i].attributes['fill']
+		end
+	end
+
+	def test_last_week_has_correct_fill_for_sunday
+		assert_equal PhotoDecorator::CalendarSundayFill, get_last_week_group.get_elements('text')[6].attributes['fill']
+	end
+
+	# <svg/g[calendar]/g[this_week]>
+	
+	def get_this_week_group
+		return get_calendar_group.get_elements('g').select { |e| e.attributes['id'] == 'this_week' }.first
+	end
+
+	def test_this_week_has_seven_text_elements
+		assert_equal 7, get_this_week_group.get_elements('text').size
+	end
+
+	def test_this_week_has_correct_x
+		for i in 0..6
+			assert_equal ((PhotoDecorator::CalendarFontSize * (i - 6)).to_f * 1.4).to_i, get_this_week_group.get_elements('text')[i].attributes['x'].to_i
+		end
+	end
+
+	def test_this_week_has_correct_y
+		expected_y = (PhotoDecorator::CalendarFontSize.to_f * 1.4).to_i
+		for i in 0..6
+			assert_equal expected_y, get_this_week_group.get_elements('text')[i].attributes['y'].to_i
+		end
+	end
+	
+	def test_this_week_has_correct_fill_for_weekdays
+		for i in 0..5
+			assert_equal PhotoDecorator::CalendarWeekdayFill, get_this_week_group.get_elements('text')[i].attributes['fill']
+		end
+	end
+
+	def test_this_week_has_correct_fill_for_sunday
+		assert_equal PhotoDecorator::CalendarSundayFill, get_this_week_group.get_elements('text')[6].attributes['fill']
+	end
+
+	# <svg/g[calendar]/g[next_two_weeks]>
+	
+	def get_next_two_weeks_group
+		return get_calendar_group.get_elements('g').select { |e| e.attributes['id'] == 'next_two_weeks' }.first
+	end
+
+	def test_next_two_weeks_has_fourteen_text_elements
+		assert_equal 14, get_next_two_weeks_group.get_elements('text').size
+	end	
+
+	def test_next_two_weeks_has_correct_x
+		for i in 0..13
+			assert_equal ((PhotoDecorator::CalendarFontSize * ((i % 7) - 6)).to_f * 1.4).to_i, get_next_two_weeks_group.get_elements('text')[i].attributes['x'].to_i
+		end
+	end
+
+	def test_next_week_has_correct_y
+		expected_y = ((PhotoDecorator::CalendarFontSize * 2).to_f * 1.4).to_i
+		for i in 0..6
+			assert_equal expected_y, get_next_two_weeks_group.get_elements('text')[i].attributes['y'].to_i
+		end
+	end
+
+	def test_week_after_next_week_has_correct_y
+		expected_y = ((PhotoDecorator::CalendarFontSize * 3).to_f * 1.4).to_i
+		for i in 7..13
+			assert_equal expected_y, get_next_two_weeks_group.get_elements('text')[i].attributes['y'].to_i
+		end
+	end
+
+	def test_next_week_has_correct_fill_for_weekdays
+		for i in 0..5
+			assert_equal PhotoDecorator::CalendarWeekdayFill, get_next_two_weeks_group.get_elements('text')[i].attributes['fill']
+		end
+	end
+
+	def test_week_after_next_week_has_correct_fill_for_weekdays
+		for i in 7..12
+			assert_equal PhotoDecorator::CalendarWeekdayFill, get_next_two_weeks_group.get_elements('text')[i].attributes['fill']
+		end
+	end
+
+	def test_next_week_has_correct_fill_for_sunday
+		assert_equal PhotoDecorator::CalendarSundayFill, get_next_two_weeks_group.get_elements('text')[6].attributes['fill']
+	end
+
+	def test_week_after_next_week_has_correct_fill_for_sunday
+		assert_equal PhotoDecorator::CalendarSundayFill, get_next_two_weeks_group.get_elements('text')[13].attributes['fill']
 	end
 end

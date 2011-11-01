@@ -94,7 +94,7 @@ task :heckle => "heckle:clean" do
 	Heckle.new('FlickrSearcher').defined_in('flickr_searcher.rb') \
 								.tested_by('flickr_searcher_unit_test.rb') \
 								.skip('find_next_photo_info', 'get_infoset') \
-								.heckle
+#								.heckle
 	Heckle.new('PhotoDecorator').defined_in('photo_decorator.rb') \
 								.tested_by('photo_decorator_unit_test.rb') \
 								.skip('convert_svg_to_jpg', 'create_svg', 'decorate', 'save_svg_to_file', 'write_svg_to_file') \

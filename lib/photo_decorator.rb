@@ -20,11 +20,17 @@
 #
 class PhotoDecorator
 
-	FontFamily = 'FranklinGothic'
+	TextFontFamily = 'FranklinGothic'
+	CalendarFontFamily = 'Franklin Gothic Heavy'
 	Bold = 'bold'
 	TextFill = '#FFCC11'
+	CalendarWeekdayFill = '#FFCC11'
+	CalendarSundayFill = '#FF0000'
 	TextFontSize = 12
 	TitleFontSize = 16
+	CalendarFontSize = 32
+	TwoWeeks = (1..2)
+	DaysOfTheWeek = (1..7)
 
 	def initialize(settings)
 		@width = settings.dimensions[0]
@@ -54,7 +60,7 @@ class PhotoDecorator
 	
 	def create_text
 		text = REXML::Element.new('text')
-		text.add_attribute('font-family', FontFamily)
+		text.add_attribute('font-family', TextFontFamily)
 		text.add_attribute('fill', TextFill)
 		return text
 	end
@@ -96,6 +102,77 @@ class PhotoDecorator
 		return group
 	end
 	
+	def get_calendar_fill(i)
+		if (i == 7)
+			return CalendarSundayFill
+		else
+			return CalendarWeekdayFill
+		end
+	end
+	
+	def get_calendar_x(i)
+		return ((CalendarFontSize * (i - 7)).to_f * 1.4).to_i
+	end
+
+	def get_calendar_y(j)
+		return ((CalendarFontSize * j).to_f * 1.4).to_i
+	end
+
+	def create_last_week
+		group = REXML::Element.new('g')
+		group.add_attribute('id', 'last_week')
+		DaysOfTheWeek.each do | i |
+			text = REXML::Element.new('text')
+			text.add_attribute('fill', get_calendar_fill(i))
+			text.add_attribute('x', get_calendar_x(i))
+			text.add_attribute('y', get_calendar_y(0))
+			group << text
+		end
+		return group
+	end
+	
+	def create_this_week
+		group = REXML::Element.new('g')
+		group.add_attribute('id', 'this_week')
+		DaysOfTheWeek.each do | i |
+			text = REXML::Element.new('text')
+			text.add_attribute('fill', get_calendar_fill(i))
+			text.add_attribute('x', get_calendar_x(i))
+			text.add_attribute('y', get_calendar_y(1))
+			group << text
+		end
+		return group
+	end
+	
+	def create_next_two_weeks
+		group = REXML::Element.new('g')
+		group.add_attribute('id', 'next_two_weeks')
+		TwoWeeks.each do | j |
+			DaysOfTheWeek.each do | i |
+				text = REXML::Element.new('text')
+				text.add_attribute('fill', get_calendar_fill(i))
+				text.add_attribute('x', get_calendar_x(i))
+				text.add_attribute('y', get_calendar_y(j + 1))
+				group << text
+			end
+		end
+		return group
+	end
+		
+	def create_calendar_group
+		group = REXML::Element.new('g')
+		group.add_attribute('id', 'calendar')
+		horizontal_translation = 9 * @width / 10
+		vertical_translation = @height / 10
+		group.add_attribute('transform', "translate(#{horizontal_translation},#{vertical_translation})")
+		group.add_attribute('font-family', CalendarFontFamily)
+		group.add_attribute('font-size', CalendarFontSize)
+		group << create_last_week
+		group << create_this_week
+		group << create_next_two_weeks
+		return group
+	end
+	
 	def create_svg(photo_info)
 		doc = REXML::Document.new
 		doc << REXML::XMLDecl.new('1.0', nil, 'no')
@@ -111,6 +188,7 @@ class PhotoDecorator
 		set_link_on_svg_image(image, photo_info)
 		svg << image
 		svg << create_photo_info_group(photo_info)
+		svg << create_calendar_group
 		doc << svg
 		return doc
 	end
