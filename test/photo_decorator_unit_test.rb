@@ -77,6 +77,44 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		@svg3 = @decorator.create_svg(photo_info3)
 	end
 	
+	# get_day_opacity_for_this_week
+
+	def test_day_opacity_for_monday_today
+		assert_equal PhotoDecorator::TodayOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 7), 1)
+	end
+	
+	def test_day_opacity_for_tuesday_on_monday
+		assert_equal PhotoDecorator::FutureOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 7), 2)
+	end
+
+	def test_day_opacity_for_sunday_on_monday
+		assert_equal PhotoDecorator::FutureOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 7), 7)
+	end
+
+	def test_day_opacity_for_monday_on_friday
+		assert_equal PhotoDecorator::PastOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 4), 1)
+	end
+
+	def test_day_opacity_for_friday_today
+		assert_equal PhotoDecorator::TodayOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 4), 5)
+	end
+
+	def test_day_opacity_for_saturday_on_friday
+		assert_equal PhotoDecorator::FutureOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 4), 6)
+	end
+
+	def test_day_opacity_for_sunday_on_friday
+		assert_equal PhotoDecorator::FutureOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 4), 7)
+	end
+	
+	def test_day_opacity_for_saturday_on_sunday
+		assert_equal PhotoDecorator::PastOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 6), 6)
+	end
+
+	def test_day_opacity_for_sunday_today
+		assert_equal PhotoDecorator::TodayOpacity, @decorator.get_day_opacity_for_this_week(Date.civil(2011, 11, 6), 7)
+	end
+
 	# get_png_file_name_from_svg_file_name
 	
 	def assert_get_png_file_name_from_svg_file_name_correct(svg_file_name, expected_png_file_name)
@@ -107,6 +145,36 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		assert_get_svg_file_name_from_photo_file_name_correct('foo.png', 'foo-decorated.svg')
 	end
 	
+	# mday
+	
+	def test_mday_for_monday_of_week_0_for_2011_11_04_should_be_31
+		assert_equal 31, @decorator.mday(Date.civil(2011, 11, 4), 0, 1)
+	end
+
+	def test_mday_for_friday_of_week_0_for_2011_11_04_should_be_4
+		assert_equal 4, @decorator.mday(Date.civil(2011, 11, 4), 0, 5)
+	end
+	
+	def test_mday_for_sunday_of_week_0_for_2011_11_04_should_be_6
+		assert_equal 6, @decorator.mday(Date.civil(2011, 11, 4), 0, 7)
+	end
+
+	def test_mday_for_sunday_of_week_0_for_2011_11_06_should_be_6
+		assert_equal 6, @decorator.mday(Date.civil(2011, 11, 6), 0, 7)
+	end
+
+	def test_mday_for_sunday_of_last_week_for_2011_11_06_should_be_30
+		assert_equal 30, @decorator.mday(Date.civil(2011, 11, 6), -1, 7)
+	end
+
+	def test_mday_for_sunday_of_next_week_for_2011_11_06_should_be_13
+		assert_equal 13, @decorator.mday(Date.civil(2011, 11, 6), 1, 7)
+	end
+
+	def test_mday_for_sunday_of_week_after_next_week_for_2011_11_06_should_be_20
+		assert_equal 20, @decorator.mday(Date.civil(2011, 11, 6), 2, 7)
+	end
+
 	# <svg>
 
 	def test_svg_has_correct_width
@@ -311,6 +379,10 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 		assert_equal PhotoDecorator::CalendarFontSize, get_calendar_group.attributes['font-size'].to_i
 	end
 
+	def test_calendar_has_correct_text_anchor
+		assert_equal 'middle', get_calendar_group.attributes['text-anchor']
+	end
+
 	def test_calendar_group_has_three_groups
 		assert_equal 3, get_calendar_group.get_elements('g').size
 	end
@@ -319,6 +391,10 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	
 	def get_last_week_group
 		return get_calendar_group.get_elements('g').select { |e| e.attributes['id'] == 'last_week' }.first
+	end
+
+	def test_last_week_has_past_opacity
+		assert_equal PhotoDecorator::PastOpacity, get_last_week_group.attributes['opacity'].to_f
 	end
 
 	def test_last_week_has_seven_text_elements
@@ -385,6 +461,11 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	def get_next_two_weeks_group
 		return get_calendar_group.get_elements('g').select { |e| e.attributes['id'] == 'next_two_weeks' }.first
 	end
+
+	def test_next_two_weeks_has_future_opacity
+		assert_equal PhotoDecorator::FutureOpacity, get_next_two_weeks_group.attributes['opacity'].to_f
+	end
+
 
 	def test_next_two_weeks_has_fourteen_text_elements
 		assert_equal 14, get_next_two_weeks_group.get_elements('text').size

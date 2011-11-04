@@ -26,6 +26,9 @@ class PhotoDecorator
 	TextFill = '#FFCC11'
 	CalendarWeekdayFill = '#FFCC11'
 	CalendarSundayFill = '#FF0000'
+	PastOpacity = 0.2
+	TodayOpacity = 1
+	FutureOpacity = 0.5
 	TextFontSize = 12
 	TitleFontSize = 16
 	CalendarFontSize = 32
@@ -117,21 +120,45 @@ class PhotoDecorator
 	def get_calendar_y(j)
 		return ((CalendarFontSize * j).to_f * 1.4).to_i
 	end
+	
+	def mday(date, weeks, day)
+		wday = date.wday
+		if (wday == 0)
+			wday = 7
+		end
+		return (date - wday + day + (7 * weeks)).mday
+	end
 
-	def create_last_week
+	def create_last_week(today)
 		group = REXML::Element.new('g')
 		group.add_attribute('id', 'last_week')
+		group.add_attribute('opacity', PastOpacity)
 		DaysOfTheWeek.each do | i |
 			text = REXML::Element.new('text')
 			text.add_attribute('fill', get_calendar_fill(i))
 			text.add_attribute('x', get_calendar_x(i))
 			text.add_attribute('y', get_calendar_y(0))
+			text.text = mday(today, -1, i)
 			group << text
 		end
 		return group
 	end
 	
-	def create_this_week
+	def get_day_opacity_for_this_week(today, day)
+		wday = today.wday
+		if (wday == 0)
+			wday = 7
+		end
+		if (day == wday)
+			return TodayOpacity
+		elsif (day < wday)
+			return PastOpacity
+		else
+			return FutureOpacity
+		end
+	end
+	
+	def create_this_week(today)
 		group = REXML::Element.new('g')
 		group.add_attribute('id', 'this_week')
 		DaysOfTheWeek.each do | i |
@@ -139,20 +166,24 @@ class PhotoDecorator
 			text.add_attribute('fill', get_calendar_fill(i))
 			text.add_attribute('x', get_calendar_x(i))
 			text.add_attribute('y', get_calendar_y(1))
+			text.add_attribute('opacity', get_day_opacity_for_this_week(today, i))
+			text.text = mday(today, 0, i)
 			group << text
 		end
 		return group
 	end
 	
-	def create_next_two_weeks
+	def create_next_two_weeks(today)
 		group = REXML::Element.new('g')
 		group.add_attribute('id', 'next_two_weeks')
+		group.add_attribute('opacity', FutureOpacity)
 		TwoWeeks.each do | j |
 			DaysOfTheWeek.each do | i |
 				text = REXML::Element.new('text')
 				text.add_attribute('fill', get_calendar_fill(i))
 				text.add_attribute('x', get_calendar_x(i))
 				text.add_attribute('y', get_calendar_y(j + 1))
+				text.text = mday(today, j, i)
 				group << text
 			end
 		end
@@ -167,9 +198,11 @@ class PhotoDecorator
 		group.add_attribute('transform', "translate(#{horizontal_translation},#{vertical_translation})")
 		group.add_attribute('font-family', CalendarFontFamily)
 		group.add_attribute('font-size', CalendarFontSize)
-		group << create_last_week
-		group << create_this_week
-		group << create_next_two_weeks
+		group.add_attribute('text-anchor', 'middle')
+		today = Date.today
+		group << create_last_week(today)
+		group << create_this_week(today)
+		group << create_next_two_weeks(today)
 		return group
 	end
 	
