@@ -268,7 +268,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 
 	def test_svg_title_text_has_correct_x
-		assert_equal Width / 10, get_title_text.attributes['x'].to_i
+		assert_equal Width / 20, get_title_text.attributes['x'].to_i
 	end
 	
 	def test_svg_title_text_has_correct_y
@@ -302,7 +302,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end	
 	
 	def test_svg_author_source_text_has_correct_x
-		assert_equal Width / 10, get_author_source_text.attributes['x'].to_i
+		assert_equal Width / 20, get_author_source_text.attributes['x'].to_i
 	end
 	
 	def test_svg_author_source_text_has_correct_y
@@ -332,7 +332,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end	
 
 	def test_svg_url_text_has_correct_x
-		assert_equal Width / 10, get_ref_url_text.attributes['x'].to_i
+		assert_equal Width / 20, get_ref_url_text.attributes['x'].to_i
 	end
 	
 	def test_svg_url_text_has_correct_y
@@ -366,7 +366,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 	
 	def test_calendar_is_transformed_correctly
-		width = 9 * Width / 10
+		width = 19 * Width / 20
 		height = Height / 10
 		assert_equal "translate(#{width},#{height})", get_calendar_group.attributes['transform']
 	end

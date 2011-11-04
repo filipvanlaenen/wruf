@@ -72,7 +72,7 @@ class PhotoDecorator
 		text = create_text
 		text.add_attribute('font-size', TitleFontSize)
 		text.add_attribute('font-weight', Bold)
-		text.add_attribute('x', @width / 10)
+		text.add_attribute('x', @width / 20)
 		text.add_attribute('y', 9 * @height / 10 - TitleFontSize - TextFontSize)
 		text.text = photo_info.title
 		return text
@@ -80,7 +80,7 @@ class PhotoDecorator
 	
 	def create_author_source_text(photo_info)
 		text = create_text
-		text.add_attribute('x', @width / 10)
+		text.add_attribute('x', @width / 20)
 		text.add_attribute('y', 9 * @height / 10 - TextFontSize)
 		text.add_attribute('font-size', TextFontSize)
 		text.text = "#{photo_info.author} @ #{photo_info.source}"
@@ -89,7 +89,7 @@ class PhotoDecorator
 	
 	def create_url_text(photo_info)
 		text = create_text
-		text.add_attribute('x', @width / 10)
+		text.add_attribute('x', @width / 20)
 		text.add_attribute('y', 9 * @height / 10)
 		text.add_attribute('font-size', TextFontSize)
 		text.text = photo_info.ref_url
@@ -193,7 +193,7 @@ class PhotoDecorator
 	def create_calendar_group
 		group = REXML::Element.new('g')
 		group.add_attribute('id', 'calendar')
-		horizontal_translation = 9 * @width / 10
+		horizontal_translation = 19 * @width / 20
 		vertical_translation = @height / 10
 		group.add_attribute('transform', "translate(#{horizontal_translation},#{vertical_translation})")
 		group.add_attribute('font-family', CalendarFontFamily)
