@@ -20,8 +20,8 @@
 #
 class PhotoDecorator
 
-	TextFontFamily = 'FranklinGothic'
-	CalendarFontFamily = 'Franklin Gothic Heavy'
+	TextFontFamily = 'Ubuntu'
+	CalendarFontFamily = 'Ubuntu'
 	Bold = 'bold'
 	TextFill = '#FFCC11'
 	CalendarWeekdayFill = '#FFCC11'
@@ -198,6 +198,7 @@ class PhotoDecorator
 		group.add_attribute('transform', "translate(#{horizontal_translation},#{vertical_translation})")
 		group.add_attribute('font-family', CalendarFontFamily)
 		group.add_attribute('font-size', CalendarFontSize)
+		group.add_attribute('font-weight', Bold)
 		group.add_attribute('text-anchor', 'middle')
 		today = Date.today
 		group << create_last_week(today)

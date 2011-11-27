@@ -40,7 +40,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	PhotoRefUrl = 'http://bar.com/foo'
 	PhotoFileName = 'e72ba8a7ffb298654e93742f9ac855dd7571d189.jpg'
 	PhotoAuthorSource = "#{PhotoAuthor} @ #{PhotoSource}"
-	FontFamily = 'FranklinGothic'
+	FontFamily = 'Ubuntu'
 	TextFill = '#FFCC11'
 	TitleTextIndex = 0
 	AuthorSourceTextIndex = 1
@@ -377,6 +377,10 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 
 	def test_calendar_has_correct_font_size
 		assert_equal PhotoDecorator::CalendarFontSize, get_calendar_group.attributes['font-size'].to_i
+	end
+
+	def test_calendar_has_correct_font_weight
+		assert_equal 'bold', get_calendar_group.attributes['font-weight']
 	end
 
 	def test_calendar_has_correct_text_anchor
