@@ -73,7 +73,7 @@ class PhotoDecorator
 		text.add_attribute('font-size', TitleFontSize)
 		text.add_attribute('font-weight', Bold)
 		text.add_attribute('x', @width / 20)
-		text.add_attribute('y', 9 * @height / 10 - TitleFontSize - 3 * TextFontSize / 2)
+		text.add_attribute('y', 9 * @height / 10 - 3 * (TitleFontSize + TextFontSize) / 2)
 		text.text = photo_info.title
 		return text
 	end

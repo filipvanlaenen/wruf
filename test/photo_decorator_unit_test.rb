@@ -272,7 +272,7 @@ class PhotoDecoratorUnitTest < Test::Unit::TestCase
 	end
 	
 	def test_svg_title_text_has_correct_y
-		assert_equal 9 * Height / 10 - TitleFontSize - 3 * TextFontSize / 2, get_title_text.attributes['y'].to_i
+		assert_equal 9 * Height / 10 - 3 * (TitleFontSize + TextFontSize) / 2, get_title_text.attributes['y'].to_i
 	end
 	
 	def test_svg_title_text_has_correct_font_family
