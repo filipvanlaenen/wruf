@@ -24,6 +24,7 @@ These are the installation instructions for WRUF.
 1.1 UBUNTU
 
 * Install Ruby and Gem.
+* Install rsvg-convert.
 * Unpack the bundle file, e.g. using the following command:
 	tar -xzf wruf-<version-number>.tar.gz
 * Navigate into the root directory of the unpacked bundle, e.g. using the following command:
