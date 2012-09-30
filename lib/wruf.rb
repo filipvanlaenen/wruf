@@ -72,10 +72,14 @@ class WRUF
 		ubuntu_release = get_ubuntu_release
 		if (ubuntu_release_compare(ubuntu_release, '11.10') < 0)
 			system "gconftool-2 -t string --set /desktop/gnome/background/picture_filename #{pic_filename}"
+			@log.debug("Executed the following system command: gconftool-2 -t string --set /desktop/gnome/background/picture_filename #{pic_filename}")
 			system 'gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"'
+			@log.debug('Executed the following system command: gconftool-2 -t string --set /desktop/gnome/background/picture_options "centered"')
 		else
 			system "gsettings set org.gnome.desktop.background picture-uri 'file://#{pic_filename}'"
+			@log.debug("Executed the following system command: gsettings set org.gnome.desktop.background picture-uri 'file://#{pic_filename}'")
 			system 'gsettings set org.gnome.desktop.background picture-options \'centered\''
+			@log.debug('Executed the following system command: gsettings set org.gnome.desktop.background picture-options \'centered\'')
 		end
 	end
 	
