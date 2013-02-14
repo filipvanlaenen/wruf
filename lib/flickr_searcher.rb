@@ -31,11 +31,12 @@ class FlickrSearcher
 	PhotosGetInfoMethod = 'flickr.photos.getInfo'
 	ApiKey = '22d606ee88b821d73258bd42859af76a'
 
-	def initialize(dims, tolerance, tags)
+	def initialize(dims, tolerance, tags, log)
 		@width = dims[0]
 		@height = dims[1]
 		@tolerance = tolerance
 		@tags = tags
+		@log = log
 	end
 	
 	def do_rest_request(form_data)
@@ -92,6 +93,7 @@ class FlickrSearcher
 		xml_photo_info = nil
 		while xml_photo_info == nil
 			i = i + 1
+			@log.debug("Getting page #{i} from Flickr.")
 			info_set = get_infoset(@tags, i)
 			xml_photo_info = get_photo_info(info_set, history)
 		end

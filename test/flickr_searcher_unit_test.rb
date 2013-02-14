@@ -114,7 +114,7 @@ EOF
 	HistoryFileName = 'history.txt'
 
 	def setup
-		@searcher = FlickrSearcher.new([1280, 800], 0.2, ['foo', 'bar'])
+		@searcher = FlickrSearcher.new([1280, 800], 0.2, ['foo', 'bar'], nil)
 	end
 	
 	# convert_photo_info

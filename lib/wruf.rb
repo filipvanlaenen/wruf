@@ -103,7 +103,7 @@ class WRUF
 	
 	def initialize_logging
 		@log = Logger.new('log')
-		@log.level = INFO
+		@log.level = DEBUG
 		file_outputter = FileOutputter.new('fileOutputter', :filename =>  File.join(@dir, LogFileName), :trunc => false)
 		pattern_formatter = PatternFormatter.new(:pattern => "%d %l: %M")
 		file_outputter.formatter = pattern_formatter
@@ -120,7 +120,7 @@ class WRUF
 		end
 		begin
 			history = PhotoHistory.load_history(history_file_name)
-			searcher = FlickrSearcher.new(@settings.dimensions, @settings.tolerance, @settings.tags)
+			searcher = FlickrSearcher.new(@settings.dimensions, @settings.tolerance, @settings.tags, @log)
 			photo_info = searcher.find_next_photo_info(history)
 			photo_info.download_photo(File.join(@dir, 'cache'))
 			photo_decorator = PhotoDecorator.new(@settings)
