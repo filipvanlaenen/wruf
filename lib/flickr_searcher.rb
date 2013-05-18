@@ -54,7 +54,7 @@ class FlickrSearcher
 		when Net::HTTPSuccess, Net::HTTPRedirection
 			return REXML::Document.new(response.body)
 		else
-			raise "An error occured while trying to access Flickr."
+			raise "An error occured while trying to access Flickr: #{response.code} (#{response.message})."
 		end		
 	end
 	
