@@ -46,6 +46,7 @@ class FlickrSearcher
 		request = Net::HTTP::Get.new(uri.path)
 		request.set_form_data(form_data)
 
+		@log.debug("Creating GET request #{uri.path + '?' + request.body}.")
 		request = Net::HTTP::Get.new(uri.path + '?' + request.body)
 
 		response = http.request(request)
