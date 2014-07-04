@@ -43,6 +43,8 @@ class FlickrSearcher
 		uri = URI.parse(FlickRestServicesUri)
 
 		http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 		request = Net::HTTP::Get.new(uri.path)
 		request.set_form_data(form_data)
 
