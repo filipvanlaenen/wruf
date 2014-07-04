@@ -25,7 +25,7 @@ require 'rexml/document'
 #
 class FlickrSearcher
 
-	FlickRestServicesUri = 'http://api.flickr.com/services/rest/'
+	FlickRestServicesUri = 'https://api.flickr.com/services/rest/'
 	PhotosSearchMethod = 'flickr.photos.search'
 	PeopleGetInfoMethod = 'flickr.people.getInfo'
 	PhotosGetInfoMethod = 'flickr.photos.getInfo'
