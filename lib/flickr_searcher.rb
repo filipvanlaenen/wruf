@@ -18,6 +18,7 @@
 require 'photo_info'
 require 'net/http'
 require 'uri'
+require 'openssl'
 require 'rexml/document'
 
 #
