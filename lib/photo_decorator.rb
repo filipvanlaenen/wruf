@@ -15,6 +15,8 @@
 # You can find a copy of the GNU General Public License in /doc/gpl.txt
 #
 
+require 'date'
+
 #
 # A class to decorate a photo.
 #
