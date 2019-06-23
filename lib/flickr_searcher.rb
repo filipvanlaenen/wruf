@@ -175,7 +175,7 @@ class FlickrSearcher
 		if (format == nil)
 			format = 'jpg'
 		end
-		return "http://farm#{farm_id}.static.flickr.com/#{server_id}/#{id}_#{secret}_o.#{format}"
+		return "https://farm#{farm_id}.static.flickr.com/#{server_id}/#{id}_#{secret}_o.#{format}"
 	end
 		
 end

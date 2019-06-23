@@ -26,12 +26,13 @@ class PhotoInfo
 
 	def download_photo(target_dir)
 		uri = URI.parse(@url)
-		Net::HTTP.start(uri.host) do |http|
-			resp = http.get(uri.path) 
-			open(File.join(target_dir, file_name), "wb") do |file|
-				file.write(resp.body)
-		   	end
-		end	
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+		resp = http.get(uri.path) 
+		open(File.join(target_dir, file_name), "wb") do |file|
+			file.write(resp.body)
+	   	end
 	end
 
 	def create_file_name
