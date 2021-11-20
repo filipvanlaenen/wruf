@@ -235,7 +235,7 @@ class PhotoDecorator
 	
 	def	convert_svg_to_jpg(svg_file_name)
 		png_file_name = get_png_file_name_from_svg_file_name(svg_file_name)
-		system("rsvg-convert #{svg_file_name} -o #{png_file_name}")
+		system("inkscape #{svg_file_name} --export-filename=#{png_file_name}")
 		return png_file_name
 	end
 	
