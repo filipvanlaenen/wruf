@@ -35,6 +35,7 @@ else
 	settings.dimensions = [1280, 800]
 	settings.tolerance = 0.2
 	settings.hours = 24
+	settings.holidays_options = [:be_nl, :no, :observed]
 end
 
 print "Enter the minimal width for the wallpaper photo [#{value_status} #{settings.dimensions[0]}]: "
@@ -68,7 +69,12 @@ if (hours != 0)
 	settings.hours = hours
 end
 
-settings.holidays_options = [:be_nl, :no, :observed]
+holidays_string = settings.holidays_options.map { |s| s.to_s }.join(' ')
+print "Enter the region(s) for which the holidays should be marked [#{value_status} ‘#{holidays_string}’]: "
+holidays_options = STDIN.readline.chomp.split(/\s/).map { |s| s.to_sym }
+if (!holidays_options.empty?)
+	settings.holidays_options = holidays_options
+end
 
 open(settings_yaml, "w") { |file|
 	file.write(settings.to_yaml)
