@@ -16,6 +16,7 @@
 #
 
 require 'date'
+require 'holidays'
 
 #
 # A class to decorate a photo.
@@ -28,6 +29,7 @@ class PhotoDecorator
 	TextFill = '#FFCC11'
 	CalendarWeekdayFill = '#FFCC11'
 	CalendarSundayFill = '#FF0000'
+	CalendarHolidayFill = '#FF00FF'
 	PastOpacity = 0.2
 	TodayOpacity = 1
 	FutureOpacity = 0.5
@@ -107,8 +109,10 @@ class PhotoDecorator
 		return group
 	end
 	
-	def get_calendar_fill(i)
-		if (i == 7)
+	def get_calendar_fill(day)
+		if !Holidays.on(day, :be_nl, :no, :observed).empty?
+		    return CalendarHolidayFill
+		elsif (day.wday == 0)
 			return CalendarSundayFill
 		else
 			return CalendarWeekdayFill
@@ -123,12 +127,12 @@ class PhotoDecorator
 		return ((CalendarFontSize * j).to_f * 1.4).to_i
 	end
 	
-	def mday(date, weeks, day)
+	def day(date, weeks, day)
 		wday = date.wday
 		if (wday == 0)
 			wday = 7
 		end
-		return (date - wday + day + (7 * weeks)).mday
+		return date - wday + day + (7 * weeks)
 	end
 
 	def create_last_week(today)
@@ -137,10 +141,11 @@ class PhotoDecorator
 		group.add_attribute('opacity', PastOpacity)
 		DaysOfTheWeek.each do | i |
 			text = REXML::Element.new('text')
-			text.add_attribute('fill', get_calendar_fill(i))
+			day = day(today, -1, i)
+			text.add_attribute('fill', get_calendar_fill(day))
 			text.add_attribute('x', get_calendar_x(i))
 			text.add_attribute('y', get_calendar_y(0))
-			text.text = mday(today, -1, i)
+			text.text = day.mday
 			group << text
 		end
 		return group
@@ -165,11 +170,12 @@ class PhotoDecorator
 		group.add_attribute('id', 'this_week')
 		DaysOfTheWeek.each do | i |
 			text = REXML::Element.new('text')
-			text.add_attribute('fill', get_calendar_fill(i))
+			day = day(today, 0, i)
+			text.add_attribute('fill', get_calendar_fill(day))
 			text.add_attribute('x', get_calendar_x(i))
 			text.add_attribute('y', get_calendar_y(1))
 			text.add_attribute('opacity', get_day_opacity_for_this_week(today, i))
-			text.text = mday(today, 0, i)
+			text.text = day.mday
 			group << text
 		end
 		return group
@@ -182,10 +188,11 @@ class PhotoDecorator
 		TwoWeeks.each do | j |
 			DaysOfTheWeek.each do | i |
 				text = REXML::Element.new('text')
-				text.add_attribute('fill', get_calendar_fill(i))
+				day = day(today, j, i)
+				text.add_attribute('fill', get_calendar_fill(day))
 				text.add_attribute('x', get_calendar_x(i))
 				text.add_attribute('y', get_calendar_y(j + 1))
-				text.text = mday(today, j, i)
+				text.text = day.mday
 				group << text
 			end
 		end

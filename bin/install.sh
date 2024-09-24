@@ -46,3 +46,8 @@ LOG4R=$(gem list log4r | awk '/log4r/ {print $1}')
 if [ ${#LOG4R[@]} -eq "0" ]; then
 	gem install -r log4r
 fi
+
+HOLIDAYS=$(gem list holidays | awk '/holidays/ {print $1}')
+if [ ${#HOLIDAYS[@]} -eq "0" ]; then
+	gem install -r holidays
+fi
