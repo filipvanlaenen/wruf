@@ -42,6 +42,7 @@ class PhotoDecorator
 	def initialize(settings)
 		@width = settings.dimensions[0]
 		@height = settings.dimensions[1]	
+		@holidays_options = settings.holidays_options
 	end
 	
 	def set_dimensions_on_svg(svg)
@@ -110,7 +111,7 @@ class PhotoDecorator
 	end
 	
 	def get_calendar_fill(day)
-		if !Holidays.on(day, :be_nl, :no, :observed).empty?
+		if !Holidays.on(day, @holidays_options).empty?
 		    return CalendarHolidayFill
 		elsif (day.wday == 0)
 			return CalendarSundayFill

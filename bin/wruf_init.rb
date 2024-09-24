@@ -68,6 +68,8 @@ if (hours != 0)
 	settings.hours = hours
 end
 
+settings.holidays_options = [:be_nl, :no, :observed]
+
 open(settings_yaml, "w") { |file|
 	file.write(settings.to_yaml)
 }

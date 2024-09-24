@@ -20,7 +20,7 @@
 #
 class WrufSettings
 
-	attr_accessor :dimensions, :hours, :tolerance
+	attr_accessor :dimensions, :holidays_options, :hours, :tolerance
 	attr_reader :tags
 
 	def initialize
@@ -28,7 +28,7 @@ class WrufSettings
 	end
 	
 	def self.load(file_name)
-		YAML::load(read_file(file_name), permitted_classes: [WrufSettings])
+		YAML::load(read_file(file_name), permitted_classes: [WrufSettings, Symbol])
 	end
 	
 	def self.read_file(file_name)
