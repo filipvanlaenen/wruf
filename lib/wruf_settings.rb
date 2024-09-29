@@ -28,7 +28,7 @@ class WrufSettings
 	end
 	
 	def self.load(file_name)
-		YAML::load(read_file(file_name), permitted_classes: [WrufSettings, Symbol])
+		YAML::safe_load(read_file(file_name), permitted_classes: [WrufSettings, Symbol])
 	end
 	
 	def self.read_file(file_name)
