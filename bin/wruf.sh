@@ -44,8 +44,8 @@ for dbusenv in $pid; do
 	eval "export $data"
 done
 
-VERSION="1.1a1"
-COPYRIGHTYEAR="2011"
+VERSION="1.2.0"
+COPYRIGHTYEAR="2024"
 
 case "$ACTION" in
   init)

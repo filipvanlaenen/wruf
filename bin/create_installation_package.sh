@@ -23,7 +23,7 @@
 # Create an empty temporary directory
 
 SCRIPTDIR="$( cd "$( dirname "$0" )" && pwd )"
-VERSION="1.1a1"
+VERSION="1.2.0"
 TEMPDIR="wruf-${VERSION}"
 
 if [ -d "$TEMPDIR" ]; then
