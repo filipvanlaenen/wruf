@@ -21,6 +21,7 @@
 #
 
 require 'yaml'
+require 'holidays'
 require 'wruf_settings'
 
 local_wruf_dir = File.expand_path(ARGV[0])
@@ -80,6 +81,11 @@ if (holidays_string.empty?)
     holidays_options = holidays_strings.map { |s| s.to_sym }
 else
 	holidays_options = holidays_string.split(/\s/).map { |s| s.to_sym }
+end
+
+invalid_regions = holidays_options - Holidays.available_regions
+if (!invalid_regions.empty?)
+	puts "WARNING: The following region(s) aren't valid or available: #{invalid_regions.map { |s| s.to_s }.join(' ')}."
 end
 
 print "Should observed holidays be included? [Y/N, #{value_status} #{observed}]: "
