@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Wallpaper Rotator Using Flickr (WRUF)
 # Copyright © 2011 Filip van Laenen <f.a.vanlaenen@ieee.org>
