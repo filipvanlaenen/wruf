@@ -69,12 +69,32 @@ if (hours != 0)
 	settings.hours = hours
 end
 
-holidays_string = settings.holidays_options.map { |s| s.to_s }.join(' ')
+holidays_strings = settings.holidays_options.map { |s| s.to_s }
+observed = !holidays_strings.delete('observed').nil? ? 'Y' : 'N'
+informal = !holidays_strings.delete('informal').nil? ? 'Y' : 'N'
+
+holidays_string = holidays_strings.join(' ')
 print "Enter the region(s) for which the holidays should be marked [#{value_status} ‘#{holidays_string}’]: "
-holidays_options = STDIN.readline.chomp.split(/\s/).map { |s| s.to_sym }
-if (!holidays_options.empty?)
-	settings.holidays_options = holidays_options
+holidays_string = STDIN.readline.chomp
+if (holidays_string.empty?)
+    holidays_options = holidays_strings.map { |s| s.to_sym }
+else
+	holidays_options = holidays_string.split(/\s/).map { |s| s.to_sym }
 end
+
+print "Should observed holidays be included? [Y/N, #{value_status} #{observed}]: "
+observed_response = STDIN.readline.chomp.upcase
+if (observed_response == 'Y' || observed_response.empty? && observed == 'Y')
+    holidays_options << :observed
+end
+
+print "Should informal holidays be included? [Y/N, #{value_status} #{informal}]: "
+informal_response = STDIN.readline.chomp.upcase
+if (informal_response == 'Y' || informal_response.empty? && informal == 'Y')
+    holidays_options << :informal
+end
+
+settings.holidays_options = holidays_options
 
 open(settings_yaml, "w") { |file|
 	file.write(settings.to_yaml)
